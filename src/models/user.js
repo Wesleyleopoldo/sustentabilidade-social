@@ -1,11 +1,11 @@
 const { DataTypes, sequelize } = require("../resources/sequelize");
-const Post = require("./post");
+
 
 const User = sequelize.define("User", {
     id: {
-        autoIncrement: true,
         primaryKey: true,
         type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         allowNull: false
     },
 
