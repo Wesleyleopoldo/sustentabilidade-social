@@ -5,7 +5,7 @@ test("POST /users deve retornar um json com url de foto e nome de usuário", asy
     const data = {
         picture_profile_url: "foto",
         username: "Teste 1",
-        email: "ficticio.exemplo5@gmail.com",
+        email: "ficticio.exemplo6@gmail.com", // Para cada teste alterar o email...
         password: "123456"
     }
 
@@ -27,8 +27,8 @@ test("POST /users deve falhar se o email já for cadastrado", async () => {
     const data = {
         picture_profile_url: "foto",
         username: "Teste 1",
-        email: "ficticio.exemplo@gmail.com",
-        password: "123456"
+        email: "ficticio.exemplo@gmail.com", // Nesse teste o intuito é realmente dar erro
+        password: "123456"                   // Não alterar o email caso queira testar o lançamento do erro.
     }
 
     const response = await request(app)
@@ -46,8 +46,8 @@ test("POST /admin deve retornar um json com url de foto e nome de usuário", asy
     const data = {
         picture_profile_url: "foto",
         username: "Teste 3",
-        email: "administrador2.exemplo@gmail.com",
-        password: "123456"
+        email: "administrador3.exemplo@gmail.com",    // Para cada teste alterar o email...
+        password: "123456"                         
     }
 
     const response = await request(app)
@@ -68,7 +68,7 @@ test("POST /users deve falhar se o email já for cadastrado", async () => {
     const data = {
         picture_profile_url: "foto",
         username: "Teste 1",
-        email: "administrador.exemplo@gmail.com",
+        email: "administrador.exemplo@gmail.com",   // Esse teste também retorna um erro...
         password: "123456"
     }
 
