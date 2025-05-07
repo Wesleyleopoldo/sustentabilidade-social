@@ -29,6 +29,43 @@ const createUser = async (body) => {
     return newUserDto;
 }
 
+
+const indexAllUsers = async () => {
+    const allUsers = await tryQuery("Erro ao listar todos usuários", () => User.findAll());
+    
+    if(!allUsers.length) {
+        throw new Error("Nenhum usuário cadastrado");
+    }
+    
+    const allUsersDto = allUsers.map(user => createUserDTO({
+        id: user.id,
+        picture_profile_url: user.picture_profile_url,
+        username: user.username,
+        email: user.email,
+        role: user.role
+    }));
+    
+    return allUsersDto;
+}
+
+const getUserById = async (id) => {
+
+    const user = await tryQuery("Erro ao buscar usuário", () => User.findByPk(id));
+    
+    if(!user) {
+        throw new Error("Nenhum usuário encontrado");
+    }
+
+    const userDto = createUserDTO({
+        id: user.id,
+        picture_profile_url: user.picture_profile_url,
+        username: user.username,
+        email: user.email
+    });
+
+    return userDto;
+}
+
 const createAdmin = async (body) => {
 
     const datas = {
@@ -59,5 +96,7 @@ const createAdmin = async (body) => {
 
 module.exports = {
     createUser,
-    createAdmin
+    indexAllUsers,
+    createAdmin,
+    getUserById
 }
