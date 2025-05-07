@@ -5,6 +5,12 @@ const createUser = async (request, response) => {
     return response.status(201).json(newUser);
 }
 
+const createAdmin = async (request, response) => {
+    const newAdmin = await userService.createAdmin(request.body);
+    return response.status(201).json(newAdmin);
+}
+
 module.exports = {
-    createUser
+    createUser,
+    createAdmin
 }
