@@ -1,4 +1,4 @@
-const useTry = require("./helper/error");
+const { useTry } = require("./helper/error");
 const defineColor = require("./helper/colors");
 const { initDb } = require("./resources/db");
 const app = require("./app");
