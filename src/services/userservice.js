@@ -87,6 +87,7 @@ const createAdmin = async (body) => {
     const admin = await tryQuery("Erro ao tentar cadastrar administrador", () => User.create(datas));
 
     const adminDto = createUserDTO({
+        id: admin.id,
         picture_profile_url: admin.picture_profile_url,
         username: admin.username
     });
@@ -94,9 +95,51 @@ const createAdmin = async (body) => {
     return adminDto;
 }
 
+const updateUsername = async (id, newUserName) => {
+    const findUser = await User.findByPk(id);
+
+    if(!findUser) {
+        throw new Error("Usuário não existe na base!!");
+    }
+
+    findUser.username = newUserName;
+    await findUser.save();
+
+    const userDto = createUserDTO({
+        username: findUser.username
+    });
+
+    return userDto;
+}
+
+const destroyUserById = async (id) => {
+
+    const userDeleted = null
+
+    const findUser = await User.findByPk(id);
+
+    if(!findUser) {
+        throw new Error("Usuário não existe na base!!");
+    }
+
+    const deletedUser = tryQuery("Erro ao deletar usuário", await User.destroy({
+        where: { id: findUser.id }
+    }));
+
+    if(deletedUser) {
+        userDeleted = "Usuário deletado com sucesso!";
+    } else {
+        userDeleted = "Ocorreu um erro ao deletar o usuário...";
+    }
+
+    return userDeleted;
+}
+
 module.exports = {
     createUser,
     indexAllUsers,
+    getUserById,
     createAdmin,
-    getUserById
+    updateUsername,
+    destroyUserById
 }
