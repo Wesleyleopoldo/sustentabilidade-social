@@ -135,11 +135,42 @@ const destroyUserById = async (id) => {
     return userDeleted;
 }
 
+const updateEmail = async (id, newEmail) => {
+    const findUser = await User.findByPk(id);
+
+    if(!findUser) {
+        throw new Error("Usuário não existe na base!!");
+    }
+
+    findUser.email = newEmail;
+    await findUser.save();
+
+    const userDto = createUserDTO({
+        email: findUser.email
+    });
+
+    return userDto;
+}
+
+const updatePassword = async (id, newPassword) => {
+    const findUser = await User.findByPk(id);
+
+    if(!findUser) {
+        throw new Error("Usuário não existe na base!!");
+    }
+
+    findUser.password = newPassword;
+    await findUser.save();
+
+    return "Senha atualizada com sucesso!!";
+}
+
 module.exports = {
     createUser,
     indexAllUsers,
     getUserById,
     createAdmin,
     updateUsername,
-    destroyUserById
+    destroyUserById,
+    updateEmail
 }
