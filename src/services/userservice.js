@@ -1,6 +1,8 @@
 const createUserDTO = require("../dtos/userDto");
+const sendCode = require("../utils/sendEmails");
 const { tryQuery, useTry } = require("../helper/error");
-const { User } = require("../resources/db");
+const { User, RecoveryCode } = require("../resources/db");
+const { DateTime } = require("luxon");
 
 const createUser = async (body) => {
 
@@ -165,6 +167,34 @@ const updatePassword = async (id, newPassword) => {
     return "Senha atualizada com sucesso!!";
 }
 
+const generateRecoveryCode = async (email) => {
+    
+    const user = await tryQuery("Erro ao buscar usuário", () => User.findOne({
+        where: { email: email }
+    }));
+
+    const code = Math.floor(100000 + Math.random() * 900000);
+    const createdAt = DateTime.now();
+    const expiresAt = createdAt.plus({ minutes: 1 });
+
+    const datas = {
+        userId: user.id,
+        code: code,
+        createdAt: createdAt,
+        expiresAt: expiresAt
+    }
+
+    if(!user) {
+        throw new Error("Usuário não existe na base!!");
+    }
+
+    const savedCode = await tryQuery("Erro ao salvar código de recuperação...", () => RecoveryCode.create(datas));
+
+    const sendedCode = await tryQuery("Erro ao enviar e-mail", () => sendCode(user.email, savedCode.code, "password"));
+
+    return { message: "Código de recuperação enviado para o e-mail fornecido." }
+}
+
 module.exports = {
     createUser,
     indexAllUsers,
@@ -172,5 +202,6 @@ module.exports = {
     createAdmin,
     updateUsername,
     destroyUserById,
-    updateEmail
+    updateEmail,
+    generateRecoveryCode
 }
