@@ -1,5 +1,6 @@
 const request = require("supertest");
 const app = require("../src/app");
+const { generateRecoveryCode } = require("../src/services/userservice");
 const { User } = require("../src/resources/db");
 
 test("POST /users deve retornar um json com url de foto e nome de usuário", async () => {
@@ -140,3 +141,8 @@ test("PUT /users/:id/username deve retornar o novo username", async () => {
     expect(response.body.username).toContain(response.body.username);
 });
 
+test("Metodo sendRecoveryCode deve enviar um código para o e-mail fornecido", async () => {
+    const result = await generateRecoveryCode("wesleycauan01@gmail.com");
+    console.log(result)
+    expect(result).toHaveProperty("message");
+})
