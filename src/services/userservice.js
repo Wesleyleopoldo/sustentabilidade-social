@@ -161,10 +161,15 @@ const updatePassword = async (id, newPassword) => {
         throw new Error("Usuário não existe na base!!");
     }
 
+    const beforePassword = findUser.password;
+
     findUser.password = newPassword;
     await findUser.save();
 
-    return "Senha atualizada com sucesso!!";
+    return { 
+        beforePassword: beforePassword, 
+        newPassword: findUser.password
+    };
 }
 
 const generateRecoveryCode = async (email) => {
@@ -203,5 +208,6 @@ module.exports = {
     updateUsername,
     destroyUserById,
     updateEmail,
+    updatePassword,
     generateRecoveryCode
 }

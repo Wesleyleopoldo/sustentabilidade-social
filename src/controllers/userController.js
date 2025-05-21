@@ -25,6 +25,16 @@ const updateUsername = async (request, response) => {
     return response.status(200).json(updatedUsername);
 }
 
+const updateEmail = async (request, response) => {
+    const updatedEmail = await userService.updateEmail(request.params.id, request.body.email);
+    return response.status(201).json(updatedEmail);
+}
+
+const updatePassword = async (request, response) => {
+    const updatedPassword = await userService.updatePassword(request.params.id, request.body.password);
+    return response.status(201).json(updatedPassword);
+}
+
 const destroyUserById = async (request, response) => {
     const deletedUser = await userService.destroyUserById(request.params.id);
     return response.status(200).json(deletedUser);
@@ -36,5 +46,7 @@ module.exports = {
     getUserById,
     createAdmin,
     updateUsername,
+    updateEmail,
+    updatePassword,
     destroyUserById
 }
