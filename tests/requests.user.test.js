@@ -7,7 +7,7 @@ test("POST /users deve retornar um json com url de foto e nome de usuário", asy
     const data = {
         picture_profile_url: "foto",
         username: "Teste 1",
-        email: "ficticio.exemplo7@gmail.com", // Para cada teste alterar o email...
+        email: "ficticio.exemplo2@gmail.com", // Para cada teste alterar o email...
         password: "123456"
     }
 
@@ -54,7 +54,7 @@ test("POST /admin deve retornar um json com url de foto e nome de usuário", asy
     const data = {
         picture_profile_url: "foto",
         username: "Teste 3",
-        email: "administrador5.exemplo@gmail.com",    // Para cada teste alterar o email...
+        email: "administrador2.exemplo@gmail.com",
         password: "123456"                         
     }
 
@@ -80,7 +80,7 @@ test("POST /admin deve falhar se o email já for cadastrado", async () => {
     const data = {
         picture_profile_url: "foto",
         username: "Teste",
-        email: "administrador3.exemplo@gmail.com",   // Esse teste também retorna um erro...
+        email: "administrador1.exemplo@gmail.com",   // Esse teste também retorna um erro...
         password: "123456"
     }
 
@@ -105,6 +105,7 @@ test("GET /users deve retornar um list de usuários", async () => {
 
     response.body.forEach(userDto => {
         expect(userDto).toHaveProperty("id");
+        expect(userDto).toHaveProperty("slug");
         expect(userDto).toHaveProperty("picture_profile_url");
         expect(userDto).toHaveProperty("username");
         expect(userDto).toHaveProperty("email");
@@ -120,7 +121,7 @@ test("GET /users deve retornar um list de usuários", async () => {
 // });
 
 test("GET /users/:id deve retornar um erro pois o banco de dados se encontra vázio", async () => {
-    const response = await request(app).get("/users/5b910723-f9c9-4ad0-ab01-b5f041a54b4f");
+    const response = await request(app).get("/users/54071d07-f599-449e-8b16-ca58b9fe416d");
     console.log(response.text);
     expect(response.status).toBe(200);
 });
@@ -131,7 +132,7 @@ test("PUT /users/:id/username deve retornar o novo username", async () => {
         username: "Nome Atualizado"
     }
 
-    const response = await request(app).put("/users/5b910723-f9c9-4ad0-ab01-b5f041a54b4f/username")
+    const response = await request(app).put("/users/fe13e840-f275-4911-90d4-e6856e042dcd/username")
                                        .send(newName)
                                        .set("Accept", "application/json");
 
@@ -146,7 +147,7 @@ test("PUT /users/:id/email deve atualizar o email e retornar o novo e-mail", asy
         email: "novoemailatualizado@gmail.com"
     }
 
-    const response = await request(app).put("/users/e0d93d3f-a04d-435f-bad3-f2b51c3ddcef/email")
+    const response = await request(app).put("/users/0bfc4a33-b0a5-4fed-99c6-7cc433dd3642/email")
                                         .send(newEmail)
                                         .set("Accept", "application/json");
 
@@ -161,7 +162,7 @@ test("PUT /users/:id/password deve atualizar a senha e retornar o nova senha", a
         password: "novasenha123"
     }
 
-    const response = await request(app).put("/users/e0d93d3f-a04d-435f-bad3-f2b51c3ddcef/password")
+    const response = await request(app).put("/users/719f2376-2e5b-4457-9ae6-aa15b952eba9/password")
                                         .send(newPassword)
                                         .set("Accept", "application/json");
 
@@ -172,7 +173,7 @@ test("PUT /users/:id/password deve atualizar a senha e retornar o nova senha", a
 });
 
 test("Metodo sendRecoveryCode deve enviar um código para o e-mail fornecido", async () => {
-    const result = await generateRecoveryCode("wesleycauan01@gmail.com");
+    const result = await generateRecoveryCode("desenvolvimentowesleyleopoldo@gmail.com");
     console.log(result)
     expect(result).toHaveProperty("message");
 });

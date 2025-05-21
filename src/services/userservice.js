@@ -6,7 +6,35 @@ const { DateTime } = require("luxon");
 
 const createUser = async (body) => {
 
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    let hash = "";
+
+    let count = 0
+
+    for (let index = 0; index < 16; index++) {
+        const charIndex = Math.floor(Math.random() * characters.length);
+
+        if (index == count + 4) {
+            hash += "-";
+            count = index;
+        }
+
+        hash += characters[charIndex];
+    }
+
+    let nameFormatted = body.username.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]+/g, "")
+        .replace(/\-\-+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    nameFormatted += hash
+
     const datas = {
+        slug: nameFormatted,
         picture_profile_url: body.picture_profile_url,
         username: body.username,
         email: body.email,
@@ -18,7 +46,7 @@ const createUser = async (body) => {
         where: { email: datas.email }
     });
 
-    if(findUser) {
+    if (findUser) {
         throw new Error("Email já cadastrado!");
     }
 
@@ -34,27 +62,28 @@ const createUser = async (body) => {
 
 const indexAllUsers = async () => {
     const allUsers = await tryQuery("Erro ao listar todos usuários", () => User.findAll());
-    
-    if(!allUsers.length) {
+
+    if (!allUsers.length) {
         throw new Error("Nenhum usuário cadastrado");
     }
-    
+
     const allUsersDto = allUsers.map(user => createUserDTO({
         id: user.id,
+        slug: user.slug,
         picture_profile_url: user.picture_profile_url,
         username: user.username,
         email: user.email,
         role: user.role
     }));
-    
+
     return allUsersDto;
 }
 
 const getUserById = async (id) => {
 
     const user = await tryQuery("Erro ao buscar usuário", () => User.findByPk(id));
-    
-    if(!user) {
+
+    if (!user) {
         throw new Error("Nenhum usuário encontrado");
     }
 
@@ -70,7 +99,35 @@ const getUserById = async (id) => {
 
 const createAdmin = async (body) => {
 
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    let hash = "";
+
+    let count = 0
+
+    for (let index = 0; index < 16; index++) {
+        const charIndex = Math.floor(Math.random() * characters.length);
+
+        if (index == count + 4) {
+            hash += "-";
+            count = index;
+        }
+
+        hash += characters[charIndex];
+    }
+
+    let nameFormatted = body.username.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]+/g, "")
+        .replace(/\-\-+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    nameFormatted += hash
+
     const datas = {
+        slug: nameFormatted,
         picture_profile_url: body.picture_profile_url,
         username: body.username,
         email: body.email,
@@ -82,7 +139,7 @@ const createAdmin = async (body) => {
         where: { email: datas.email }
     });
 
-    if(findUser) {
+    if (findUser) {
         throw new Error("Email já cadastrado!");
     }
 
@@ -100,7 +157,7 @@ const createAdmin = async (body) => {
 const updateUsername = async (id, newUserName) => {
     const findUser = await User.findByPk(id);
 
-    if(!findUser) {
+    if (!findUser) {
         throw new Error("Usuário não existe na base!!");
     }
 
@@ -116,22 +173,24 @@ const updateUsername = async (id, newUserName) => {
 
 const destroyUserById = async (id) => {
 
-    const userDeleted = null
+    let userDeleted = null;
 
     const findUser = await User.findByPk(id);
 
-    if(!findUser) {
+    if (!findUser) {
         throw new Error("Usuário não existe na base!!");
     }
 
-    const deletedUser = tryQuery("Erro ao deletar usuário", await User.destroy({
-        where: { id: findUser.id }
-    }));
+    const deletedUser = tryQuery("Erro ao deletar usuário", () => 
+        User.destroy({
+            where: { id: findUser.id }
+        })
+    );
 
-    if(deletedUser) {
-        userDeleted = "Usuário deletado com sucesso!";
+    if (deletedUser) {
+        userDeleted = { message: "Usuário deletado com sucesso!" };
     } else {
-        userDeleted = "Ocorreu um erro ao deletar o usuário...";
+        userDeleted = { message: "Ocorreu um erro ao deletar o usuário..." };
     }
 
     return userDeleted;
@@ -140,7 +199,7 @@ const destroyUserById = async (id) => {
 const updateEmail = async (id, newEmail) => {
     const findUser = await User.findByPk(id);
 
-    if(!findUser) {
+    if (!findUser) {
         throw new Error("Usuário não existe na base!!");
     }
 
@@ -157,7 +216,7 @@ const updateEmail = async (id, newEmail) => {
 const updatePassword = async (id, newPassword) => {
     const findUser = await User.findByPk(id);
 
-    if(!findUser) {
+    if (!findUser) {
         throw new Error("Usuário não existe na base!!");
     }
 
@@ -166,14 +225,14 @@ const updatePassword = async (id, newPassword) => {
     findUser.password = newPassword;
     await findUser.save();
 
-    return { 
-        beforePassword: beforePassword, 
+    return {
+        beforePassword: beforePassword,
         newPassword: findUser.password
     };
 }
 
 const generateRecoveryCode = async (email) => {
-    
+
     const user = await tryQuery("Erro ao buscar usuário", () => User.findOne({
         where: { email: email }
     }));
@@ -189,7 +248,7 @@ const generateRecoveryCode = async (email) => {
         expiresAt: expiresAt
     }
 
-    if(!user) {
+    if (!user) {
         throw new Error("Usuário não existe na base!!");
     }
 
@@ -198,6 +257,10 @@ const generateRecoveryCode = async (email) => {
     const sendedCode = await tryQuery("Erro ao enviar e-mail", () => sendCode(user.email, savedCode.code, "password"));
 
     return { message: "Código de recuperação enviado para o e-mail fornecido." }
+}
+
+const validatyRecoveryCode = async (slug, code) => {
+
 }
 
 module.exports = {

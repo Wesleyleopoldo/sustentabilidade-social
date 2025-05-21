@@ -9,6 +9,13 @@ const User = sequelize.define("User", {
         allowNull: false
     },
 
+    slug: {
+        unique: true,
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "undefined"
+    },
+
     picture_profile_url: {
         type: DataTypes.STRING(255),
         allowNull: true
