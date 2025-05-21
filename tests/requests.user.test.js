@@ -138,11 +138,41 @@ test("PUT /users/:id/username deve retornar o novo username", async () => {
     console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("username");
-    expect(response.body.username).toContain(response.body.username);
+    expect(response.body.username).toBe(newName.username);
+});
+
+test("PUT /users/:id/email deve atualizar o email e retornar o novo e-mail", async () => {
+    const newEmail = {
+        email: "novoemailatualizado@gmail.com"
+    }
+
+    const response = await request(app).put("/users/e0d93d3f-a04d-435f-bad3-f2b51c3ddcef/email")
+                                        .send(newEmail)
+                                        .set("Accept", "application/json");
+
+    console.log(response.body);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("email");
+    expect(response.body.email).toBe(newEmail.email);
+});
+
+test("PUT /users/:id/password deve atualizar a senha e retornar o nova senha", async () => {
+    const newPassword = {
+        password: "novasenha123"
+    }
+
+    const response = await request(app).put("/users/e0d93d3f-a04d-435f-bad3-f2b51c3ddcef/password")
+                                        .send(newPassword)
+                                        .set("Accept", "application/json");
+
+    console.log(response.body);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("newPassword");
+    expect(response.body.newPassword).toBe(newPassword.password);
 });
 
 test("Metodo sendRecoveryCode deve enviar um código para o e-mail fornecido", async () => {
     const result = await generateRecoveryCode("wesleycauan01@gmail.com");
     console.log(result)
     expect(result).toHaveProperty("message");
-})
+});
