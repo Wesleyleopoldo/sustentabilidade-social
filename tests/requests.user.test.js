@@ -103,13 +103,13 @@ test("GET /users deve retornar um list de usuários", async () => {
 
     console.log(response.body);
 
-    response.body.forEach(userDto => {
-        expect(userDto).toHaveProperty("id");
-        expect(userDto).toHaveProperty("slug");
-        expect(userDto).toHaveProperty("picture_profile_url");
-        expect(userDto).toHaveProperty("username");
-        expect(userDto).toHaveProperty("email");
-        expect(userDto).toHaveProperty("role");
+    response.body.forEach(user => {
+        expect(user).toHaveProperty("id");
+        expect(user).toHaveProperty("slug");
+        expect(user).toHaveProperty("picture_profile_url");
+        expect(user).toHaveProperty("username");
+        expect(user).toHaveProperty("email");
+        expect(user).toHaveProperty("role");
     });
 });
 
