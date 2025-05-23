@@ -10,12 +10,24 @@ const createPost = async (request, response) => {
     return response.status(201).json(newPost);
 }
 
-const indexAllPosts = async (request, response) => {
+const indexAllPosts = async (_request, response) => {
     const posts = await postService.indexAllPosts();
     return response.status(200).json(posts);
 }
 
+const addLikes = async (request, response) => {
+    const postLikes = await postService.addLike(request.params.id);
+    return response.status(201).json(postLikes);
+}
+
+const removeLike = async (request, response) => {
+    const postLikes = await postService.removeLike(request.params.id);
+    return response.status(200).json(postLikes);
+}
+
 module.exports = {
     createPost,
-    indexAllPosts
+    indexAllPosts,
+    addLikes,
+    removeLike
 }

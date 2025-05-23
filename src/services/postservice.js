@@ -32,23 +32,88 @@ const createPost = async (title, content, userId, dateTime) => {
 
 const indexAllPosts = async () => {
     const posts = await tryQuery("Erro ao listar todos os posts", () => Post.findAll());
+    let postsDto = []
+
     if (!posts.length) {
         throw new Error("Nenhum post encontrado!");
     }
 
-    const postsDto = posts.map(post => createPostDTO({
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        // TODO: Criar método para pegar o slug de cada usuário dono dos posts...
-        dateTime: post.dateTime,
-        likes: post.likes
-    }));
+    for(let index = 0; index < posts.length; index ++) {
+        const post = posts[index];
+
+    
+
+        const user = await User.findOne({
+            where: { id: post.userId }
+        });
+
+        if (!user) continue;
+
+        postsDto.push(createPostDTO({
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            slug: user.slug,
+            dateTime: post.dateTime,
+            likes: post.likes
+        }));
+    }
+    
+    // const postsDto = posts.map(post => createPostDTO({
+    //     id: post.id,
+    //     title: post.title,
+    //     content: post.content,
+    //     // TODO: Criar método para pegar o slug de cada usuário dono dos posts...
+    //     slug: 
+    //     dateTime: post.dateTime,
+    //     likes: post.likes
+    // }));
+
 
     return postsDto
 }
 
+const addLike = async (postId) => {
+    const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
+
+    if(!post) {
+        throw new Error("Post não encontrado!!!");
+    }
+
+    post.likes += 1;
+
+    await post.save();
+
+    const likesDto = createPostDTO({
+        id: post.id,
+        likes: post.likes
+    });
+
+    return likesDto
+}
+
+const removeLike = async (postId) => {
+    const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
+
+    if(!post) {
+        throw new Error("Post não encontrado");
+    }
+
+    post.likes -= 1;
+
+    await post.save();
+
+    const likesDto = createPostDTO({
+        id: post.id,
+        likes: post.likes
+    });
+
+    return likesDto;
+}
+
 module.exports = {
     createPost,
-    indexAllPosts
+    indexAllPosts,
+    addLike,
+    removeLike
 }

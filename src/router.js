@@ -16,5 +16,7 @@ router.delete("/users/:id/delete", userController.destroyUserById);
 // Rotas para os recursos de posts...
 router.post("/:id/posts", postController.createPost);
 router.get("/posts", postController.indexAllPosts);
+router.post("/:id/post/like", postController.addLikes);
+router.post("/:id/post/removelike", postController.removeLike);
 
 module.exports = router;

@@ -44,7 +44,24 @@ test("GET /posts deve retornar uma lista de posts", async () => {
         expect(post).toHaveProperty("id");
         expect(post).toHaveProperty("title");
         expect(post).toHaveProperty("content");
+        expect(post).toHaveProperty("slug");
         expect(post).toHaveProperty("dateTime");
         expect(post).toHaveProperty("likes");
     });
+})
+
+test("POST /:id/post/like deve retornar o novo número de likes", async () => {
+    const response = await request(app).post("/12/post/like").set("Accept", "application/json");
+
+    console.log(response.body);
+
+    expect(response.body).toHaveProperty("likes");
+})
+
+test("POST /:id/post/like deve retornar o novo número de likes", async () => {
+    const response = await request(app).post("/12/post/removelike").set("Accept", "application/json");
+
+    console.log(response.body);
+
+    expect(response.body).toHaveProperty("likes");
 })
