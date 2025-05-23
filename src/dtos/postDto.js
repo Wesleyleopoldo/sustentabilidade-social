@@ -19,3 +19,5 @@ function createPostDTO(data = {}) {
 
     return dto;
 }
+
+module.exports = createPostDTO;
