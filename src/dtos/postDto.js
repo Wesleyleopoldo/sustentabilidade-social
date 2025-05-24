@@ -4,6 +4,7 @@ function createPostDTO(data = {}) {
         title,
         content,
         slug,
+        username,
         userId,
         dateTime,
         likes
@@ -15,6 +16,7 @@ function createPostDTO(data = {}) {
     if(title !== undefined) dto.title = title;
     if(content !== undefined) dto.content = content;
     if(slug !== undefined) dto.slug = slug;
+    if(username !== undefined) dto.username = username;
     if(userId !== undefined) dto.userId = userId;
     if(dateTime !== undefined) dto.dateTime = dateTime;
     if(likes !== undefined) dto.likes = likes;
