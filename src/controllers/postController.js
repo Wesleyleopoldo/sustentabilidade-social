@@ -15,6 +15,11 @@ const indexAllPosts = async (_request, response) => {
     return response.status(200).json(posts);
 }
 
+const indexPost = async (request, response) => {
+    const post = await postService.indexPost(request.params.id);
+    return response.status(200).json(post);
+}
+
 const addLikes = async (request, response) => {
     const postLikes = await postService.addLike(request.params.id);
     return response.status(201).json(postLikes);
@@ -28,6 +33,7 @@ const removeLike = async (request, response) => {
 module.exports = {
     createPost,
     indexAllPosts,
+    indexPost,
     addLikes,
     removeLike
 }
