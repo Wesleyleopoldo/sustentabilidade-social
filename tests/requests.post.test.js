@@ -50,6 +50,18 @@ test("GET /posts deve retornar uma lista de posts", async () => {
     });
 })
 
+test("GET /:id/posts deve retornar um post", async () => {
+    const response = await request(app).get("/12/posts");
+
+    console.log(response.body);
+
+    expect(response.body).toHaveProperty("id");
+    expect(response.body).toHaveProperty("title");
+    expect(response.body).toHaveProperty("content");
+    expect(response.body).toHaveProperty("slug");
+    expect(response.body).toHaveProperty("username");
+})
+
 test("POST /:id/post/like deve retornar o novo número de likes", async () => {
     const response = await request(app).post("/12/post/like").set("Accept", "application/json");
 
