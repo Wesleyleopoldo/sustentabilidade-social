@@ -54,6 +54,7 @@ const indexAllPosts = async () => {
             title: post.title,
             content: post.content,
             slug: user.slug,
+            username: user.username,
             dateTime: post.dateTime,
             likes: post.likes
         }));
@@ -71,6 +72,32 @@ const indexAllPosts = async () => {
 
 
     return postsDto
+}
+
+const indexPost = async (postId) => {
+    const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
+
+    if(!post) {
+        throw new Error("Post não encontrado!!!");
+    }
+
+    const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(post.userId));
+
+    if(!findUser) {
+        throw new Error("Usuário não encontrado!!!");
+    }
+
+    const postDto = createPostDTO({
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        slug: findUser.slug,
+        username: findUser.username,
+        dateTime: post.dateTime,
+        likes: post.likes
+    });
+
+    return postDto;
 }
 
 const addLike = async (postId) => {
@@ -114,6 +141,7 @@ const removeLike = async (postId) => {
 module.exports = {
     createPost,
     indexAllPosts,
+    indexPost,
     addLike,
     removeLike
 }
