@@ -1,6 +1,6 @@
 const createPostDTO = require("../dtos/postDto");
 const { tryQuery, useTry } = require("../helper/error");
-const { Post, User } = require("../resources/db");
+const { Post, User, Likes } = require("../resources/db");
 
 const createPost = async (title, content, userId, dateTime) => {
     const data = {
@@ -100,12 +100,22 @@ const indexPost = async (postId) => {
     return postDto;
 }
 
-const addLike = async (postId) => {
+const addLike = async (postId, userId) => {
     const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
 
     if(!post) {
         throw new Error("Post não encontrado!!!");
     }
+
+    const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(userId));
+
+    if(!findUser) {
+        throw new Error("Usuário não encontrado!!!");
+    }
+
+    const isLiked = await tryQuery("Algo deu errado ao verificar se o usuário já curtiu o post", () => Likes.findOne({
+        where: { userId: findUser.userId }
+    }))
 
     post.likes += 1;
 

@@ -7,7 +7,8 @@ function createPostDTO(data = {}) {
         username,
         userId,
         dateTime,
-        likes
+        likes,
+        liked
     } = data;
 
     const dto = {};
@@ -20,6 +21,7 @@ function createPostDTO(data = {}) {
     if(userId !== undefined) dto.userId = userId;
     if(dateTime !== undefined) dto.dateTime = dateTime;
     if(likes !== undefined) dto.likes = likes;
+    if(liked !== undefined) dto.liked = liked;
 
     return dto;
 }
