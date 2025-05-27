@@ -26,10 +26,19 @@ const addLikes = async (request, response, next) => {
     return response.status(201).json(postLikes);
 }
 
-const removeLike = async (request, response, next) => {
-    const postLikes = await tryRun(next, () => postService.removeLike(request.params.id, request.params.userId));
-    if (!postLikes) return;
+const removeLike = async (request, response) => {
+    const postLikes = await postService.removeLike(request.params.id, request.params.userId);
     return response.status(200).json(postLikes);
+}
+
+const createComment = async (request, response) => {
+    const createdComment = await postService.createComment(request.params.userId, request.params.postId, request.body.comment, request.body.createdAt);
+    return response.status(201).json(createdComment);
+}
+
+const updateComment = async (request, response) => {
+    const updatedComment = await postService.updateComment(request.params.commentId, request.params.userId, request.body.content);
+    return response.status(201).json(updatedComment);
 }
 
 module.exports = {
@@ -37,5 +46,7 @@ module.exports = {
     indexAllPosts,
     indexPost,
     addLikes,
-    removeLike
+    removeLike,
+    createComment,
+    updateComment
 }
