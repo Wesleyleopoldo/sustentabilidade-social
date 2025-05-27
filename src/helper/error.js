@@ -4,7 +4,6 @@ async function tryRun(funException, fun, ...args) {
     try {
         return await fun(...args);
     } catch (error) {
-        console.log("Entrou aqui")
         funException(error);
     }
 }
