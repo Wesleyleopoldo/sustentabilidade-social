@@ -17,4 +17,7 @@ router.delete("/users/:id/delete", userController.destroyUserById);
 router.post("/:id/posts", postController.createPost);
 router.get("/posts", postController.indexAllPosts);
 
+router.post("/:postId/:userId/comment", postController.createComment);
+router.put("/:userId/:commentId/comment", postController.updateComment);
+
 module.exports = router;
