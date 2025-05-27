@@ -1,5 +1,5 @@
 const createPostDTO = require("../dtos/postDto");
-const { tryQuery, useTry } = require("../helper/error");
+const { tryQuery, useTry, AppError } = require("../helper/error");
 const { Post, User, Likes } = require("../resources/db");
 
 const createPost = async (title, content, userId, dateTime) => {
@@ -78,13 +78,13 @@ const indexPost = async (postId) => {
     const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
 
     if(!post) {
-        throw new Error("Post não encontrado!!!");
+        throw new AppError("Post não encontrado!!!", 404);
     }
 
     const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(post.userId));
 
     if(!findUser) {
-        throw new Error("Usuário não encontrado!!!");
+        throw new AppError("Usuário não encontrado!!!", 404);
     }
 
     const postDto = createPostDTO({
@@ -101,6 +101,8 @@ const indexPost = async (postId) => {
 }
 
 const addLike = async (postId, userId) => {
+
+    const action = "like";
     const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
 
     if(!post) {
@@ -110,12 +112,32 @@ const addLike = async (postId, userId) => {
     const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(userId));
 
     if(!findUser) {
-        throw new Error("Usuário não encontrado!!!");
+        throw new AppError("Usuário não encontrado!!!", 404);
     }
 
     const isLiked = await tryQuery("Algo deu errado ao verificar se o usuário já curtiu o post", () => Likes.findOne({
-        where: { userId: findUser.userId }
-    }))
+        where: { userId: userId, postId: post.id }
+    }));
+
+    if(isLiked && isLiked.action === "like") {
+        throw new AppError("Usuário já curtiu esse post!!!", 409);
+    }
+
+    if(!isLiked) {
+
+        const data = {
+            postId: postId,
+            userId: userId,
+            action: "like"
+        }
+    
+        await tryQuery("Erro ao salvar o usuário que curtiu o post!!!", () => Likes.create(data));
+    
+    } else {
+        isLiked.action = "like"
+        await isLiked.save();
+    }
+
 
     post.likes += 1;
 
@@ -129,12 +151,35 @@ const addLike = async (postId, userId) => {
     return likesDto
 }
 
-const removeLike = async (postId) => {
+const removeLike = async (postId, userId) => {
+
     const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
 
     if(!post) {
-        throw new Error("Post não encontrado");
+        throw new AppError("Post não encontrado", 404);
     }
+
+    const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(userId));
+
+    if(!findUser) {
+        throw new AppError("Usuário não encontrado!!!", 404);
+    }
+
+    const isLiked = await tryQuery("Algo deu errado ao verificar se o usuário já curtiu o post", () => Likes.findOne({
+        where: { userId: userId, postId: post.id }
+    }));
+
+    if(!isLiked) {
+        throw new AppError("Usuário nunca curtiu esse post!!!", 404);
+    }
+    else if(isLiked && isLiked.action === "unlike") {
+        console.log("Entrou aqui")
+        throw new AppError("Usuário já descurtiu esse post!!!", 409);
+    }
+
+    isLiked.action = "unlike";
+
+    await isLiked.save();
 
     post.likes -= 1;
 
