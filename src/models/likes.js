@@ -22,6 +22,15 @@ const Likes = sequelize.define("Likes", {
         allowNull: false,
         onDelete: "CASCADE"
     },
+
+    action: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isIn: [["like", "unlike"]]
+        }
+    }
+
 });
 
 Likes.belongsTo(User, {
