@@ -1,5 +1,14 @@
 const defineColor = require("./colors");
 
+async function tryRun(funException, fun, ...args) {
+    try {
+        return await fun(...args);
+    } catch (error) {
+        console.log("Entrou aqui")
+        funException(error);
+    }
+}
+
 async function useTry(fun, errorMessage) {
     try {
         await fun();
@@ -16,7 +25,25 @@ async function tryQuery(errorMessage, fun, ...args) {
     }
 }
 
+class AppError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+        this.name = this.constructor.name;
+        Error.captureStackTrace(this, this.constructor);
+    }
+
+    toJSON() {
+        return {
+            error: this.name,
+            message: this.message
+        };
+    }
+}
+
 module.exports = {
+    tryRun,
     useTry,
-    tryQuery
+    tryQuery,
+    AppError
 };
