@@ -13,7 +13,7 @@ const createPost = async (title, content, userId, dateTime) => {
 
     const findUser = await tryQuery("Usuário pode não existir", () => User.findByPk(userId));
     if (!findUser) {
-        throw new Error("Usuário não foi encontrado na base de dados!!!");
+        throw new AppError("Usuário não foi encontrado na base de dados!!!", 404);
     }
 
     const newPost = await tryQuery("Erro ao criar post", () => Post.create(data));
@@ -35,7 +35,7 @@ const indexAllPosts = async () => {
     let postsDto = []
 
     if (!posts.length) {
-        throw new Error("Nenhum post encontrado!");
+        throw new AppError("Nenhum post encontrado!", 404);
     }
 
     for(let index = 0; index < posts.length; index ++) {
@@ -102,7 +102,6 @@ const indexPost = async (postId) => {
 
 const addLike = async (postId, userId) => {
 
-    const action = "like";
     const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
 
     if(!post) {
