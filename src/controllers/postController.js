@@ -1,4 +1,5 @@
 const postService = require("../services/postservice");
+const { tryRun } = require("../helper/error");
 
 const createPost = async (request, response) => {
     const newPost = await postService.createPost(
@@ -20,13 +21,14 @@ const indexPost = async (request, response) => {
     return response.status(200).json(post);
 }
 
-const addLikes = async (request, response) => {
-    const postLikes = await postService.addLike(request.params.id);
+const addLikes = async (request, response, next) => {
+    const postLikes = await tryRun(next, () => postService.addLike(request.params.id, request.params.userId));
     return response.status(201).json(postLikes);
 }
 
-const removeLike = async (request, response) => {
-    const postLikes = await postService.removeLike(request.params.id);
+const removeLike = async (request, response, next) => {
+    const postLikes = await tryRun(next, () => postService.removeLike(request.params.id, request.params.userId));
+    if (!postLikes) return;
     return response.status(200).json(postLikes);
 }
 
