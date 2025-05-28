@@ -25,5 +25,4 @@ router.put("/:userId/:commentId/comment", postController.updateComment);
 router.delete("/:userId/:commentId/removecomment", postController.destroyComment);
 router.get("/:postId/comments", postController.indexAllCommentsByPostId);
 
-
 module.exports = router;

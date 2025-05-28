@@ -2,8 +2,15 @@ const createCommentDTO = require("../dtos/commentDto");
 const createPostDTO = require("../dtos/postDto");
 const { tryQuery, useTry, AppError } = require("../helper/error");
 const { Post, User, Likes, Comments } = require("../resources/db");
+const classifyTheme = require("../utils/aiSentinel");
 
 const createPost = async (title, content, userId, dateTime) => {
+
+    console.log("Passou por aqui")
+    const permission = await classifyTheme(content);
+
+    console.log(permission);
+
     const data = {
         title: title,
         content: content,
