@@ -41,6 +41,16 @@ const updateComment = async (request, response) => {
     return response.status(201).json(updatedComment);
 }
 
+const destroyComment = async (request, response) => {
+    const destroyedComment = await postService.destroyComment(request.params.commentId, request.params.userId);
+    return response.status(201).json(destroyedComment);
+}
+
+const indexAllCommentsByPostId = async (request, response) => {
+    const allComments = await postService.indexAllCommentsByPostId(request.params.postId);
+    return response.status(200).json(allComments);
+}
+
 module.exports = {
     createPost,
     indexAllPosts,
@@ -48,5 +58,7 @@ module.exports = {
     addLikes,
     removeLike,
     createComment,
-    updateComment
+    updateComment,
+    destroyComment,
+    indexAllCommentsByPostId
 }
