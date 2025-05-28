@@ -5,7 +5,7 @@ function errorHandler(err, request, response, next) {
 
     response.status(statusCode).json({
         success: false,
-        message: err.message || "Erro interno no servidor"
+        message: "Erro interno no servidor"
     });
 }
 
