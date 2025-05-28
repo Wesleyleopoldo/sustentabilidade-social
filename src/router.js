@@ -23,7 +23,6 @@ router.put("/:userId/:id/post/removelike", postController.removeLike);
 router.post("/:postId/:userId/comment", postController.createComment);
 router.put("/:userId/:commentId/comment", postController.updateComment);
 router.delete("/:userId/:commentId/removecomment", postController.destroyComment);
-// router.get("/:postId/comments", postController);
 router.get("/:postId/comments", postController.indexAllCommentsByPostId);
 
 

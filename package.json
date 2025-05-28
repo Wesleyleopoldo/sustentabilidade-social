@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "Dev": "nodemon ./src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "nodemon": "^3.1.10",
     "supertest": "^7.1.0"
   }
 }
