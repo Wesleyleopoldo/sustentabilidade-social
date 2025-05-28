@@ -284,6 +284,7 @@ const destroyComment = async (commentId, userId) => {
 
 const indexAllCommentsByPostId = async (postId) => {
     const post = await tryQuery("Erro ao tentar buscar post!!!", () => Post.findByPk(postId));
+    let commentsDto = []
 
     if(!post) {
         throw new AppError("Post não encontrado!!!", 404);
@@ -292,7 +293,31 @@ const indexAllCommentsByPostId = async (postId) => {
     const allComments = await tryQuery("Erro ao listar comentários!!", () => Comments.findAll({
         where: { postId: post.id }
     }));
-} 
+
+    if(!allComments.length) {
+        throw new AppError("Nenhum Comentário encontrado!!!", 404);
+    }
+
+    for(let index = 0; index < allComments.length; index ++) {
+        const comment = allComments[index];
+        const user = await User.findOne({
+            where: { id: comment.userId }
+        });
+
+        if(!user) continue;
+
+        commentsDto.push(createCommentDTO({
+            id: comment.id,
+            postId: comment.postId,
+            slug: user.slug,
+            userName: user.username,
+            content: comment.content,
+            dateTime: comment.dateTime
+        }));
+    }
+
+    return commentsDto;
+}
 
 module.exports = {
     createPost,
@@ -301,5 +326,7 @@ module.exports = {
     addLike,
     removeLike,
     createComment,
-    updateComment
+    updateComment,
+    destroyComment,
+    indexAllCommentsByPostId
 }
