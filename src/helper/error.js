@@ -8,6 +8,14 @@ async function tryRun(funException, fun, ...args) {
     }
 }
 
+function tryCatch(errorMessage, fun, ...args) {
+    try {
+        fun(...args);
+    } catch(error) {
+        console.log(defineColor(`Algo deu errado: ${errorMessage} (${error})`, "red"));
+    }
+}
+
 async function useTry(fun, errorMessage) {
     try {
         await fun();
@@ -42,6 +50,7 @@ class AppError extends Error {
 
 module.exports = {
     tryRun,
+    tryCatch,
     useTry,
     tryQuery,
     AppError

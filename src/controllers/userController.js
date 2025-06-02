@@ -1,5 +1,10 @@
 const userService = require("../services/userservice");
 
+const login = async (request, response) => {
+    const token = await userService.login(request.body.email, request.body.password);
+    return response.status(200).json(token);
+}
+
 const createUser = async (request, response) => {
     const newUser = await userService.createUser(request.body);
     return response.status(201).json(newUser);
@@ -41,6 +46,7 @@ const destroyUserById = async (request, response) => {
 }
 
 module.exports = {
+    login,
     createUser,
     indexAllUsers,
     getUserById,

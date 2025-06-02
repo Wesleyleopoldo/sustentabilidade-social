@@ -1,12 +1,14 @@
 const express = require("express");
+const userMiddleware = require("./middlewares/usersMiddlewares");
 const userController = require("./controllers/userController");
 const postController = require("./controllers/postController");
 const router = express.Router();
 
 // Rotas para os recursos de usuários...
+router.post("/users/login", userController.login);
 router.post("/users", userController.createUser);
 router.get("/users", userController.indexAllUsers);
-router.get("/users/:id", userController.getUserById);
+router.get("/users/:id", userMiddleware.verifyTokens, userController.getUserById);
 router.post("/admin", userController.createAdmin);
 router.put("/users/:id/username", userController.updateUsername);
 router.put("/users/:id/email", userController.updateEmail);
