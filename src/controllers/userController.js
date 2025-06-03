@@ -16,7 +16,7 @@ const indexAllUsers = async (_request, response) => {
 }
 
 const getUserById = async (request, response) => {
-    const user = await userService.getUserById(request.params.id);
+    const user = await userService.getUserById(request.user.id);
     return response.status(200).json(user);
 }
 
