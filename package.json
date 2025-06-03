@@ -13,6 +13,11 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "form-data": "^4.0.2",
+<<<<<<< HEAD
+=======
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+>>>>>>> 68df98b (Adiciona validações falta muitoooooooooooooooooooooooooo)
     "luxon": "^3.6.1",
     "mailgun.js": "^12.0.1",
     "sequelize": "^6.37.7",
