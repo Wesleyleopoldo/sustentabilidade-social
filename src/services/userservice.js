@@ -1,9 +1,53 @@
 const createUserDTO = require("../dtos/userDto");
 const sendCode = require("../utils/sendEmails");
+<<<<<<< HEAD
 const { tryQuery, useTry } = require("../helper/error");
 const { User, RecoveryCode } = require("../resources/db");
 const { DateTime } = require("luxon");
 
+=======
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
+const { tryQuery, useTry, AppError } = require("../helper/error");
+const { User, RecoveryCode } = require("../resources/db");
+const { DateTime } = require("luxon");
+
+require("dotenv").config();
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PUBLIC_KEY = fs.readFileSync("./public.key"); 
+
+const login = async (email, password) => {
+
+    const findUser = await tryQuery("Erro ao buscar usuário no banco de dados!!!", () => User.findOne({
+        where: { email: email }
+    }));
+
+    console.log("Passou aqui");
+
+    if (!findUser || !bcrypt.compareSync(password, findUser.password)) {
+        throw new AppError("Usuário não encontrado. Verifique o email ou se cadastre.", 401);
+    }
+
+    console.log("Passou a comparação")
+
+    const token = {
+        token: jwt.sign(
+            { id: findUser.id },
+            PRIVATE_KEY,
+            { 
+                expiresIn: "1h",
+                algorithm: "RS256"
+            }
+        )
+    }
+
+    return token;
+}
+
+>>>>>>> 3acec77 (Adiciona token jwt pohaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)
 const createUser = async (body) => {
 
     const datas = {

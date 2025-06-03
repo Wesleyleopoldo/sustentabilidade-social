@@ -8,6 +8,17 @@ async function tryRun(funException, fun, ...args) {
     }
 }
 
+<<<<<<< HEAD
+=======
+function tryCatch(errorMessage, fun, ...args) {
+    try {
+        return fun(...args);
+    } catch(error) {
+        console.log(defineColor(`Algo deu errado: ${errorMessage} (${error})`, "red"));
+    }
+}
+
+>>>>>>> 3acec77 (Adiciona token jwt pohaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)
 async function useTry(fun, errorMessage) {
     try {
         await fun();
