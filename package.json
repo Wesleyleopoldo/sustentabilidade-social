@@ -21,7 +21,8 @@
     "mailgun.js": "^12.0.1",
     "node-fetch": "^3.3.2",
     "sequelize": "^6.37.7",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "sustentabilidade-social": "file:"
   },
   "devDependencies": {
     "jest": "^29.7.0",

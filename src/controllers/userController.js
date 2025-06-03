@@ -26,7 +26,7 @@ const createAdmin = async (request, response) => {
 }
 
 const updateUsername = async (request, response) => {
-    const updatedUsername = await userService.updateUsername(request.params.id, request.body.username);
+    const updatedUsername = await userService.updateUsername(request.user.id, request.body.username);
     return response.status(200).json(updatedUsername);
 }
 
