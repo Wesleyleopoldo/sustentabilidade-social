@@ -1,5 +1,5 @@
 const express = require("express");
-const userMiddleware = require("./middlewares/usersMiddlewares");
+const validationToken = require("./middlewares/validationToken");
 const userController = require("./controllers/userController");
 const postController = require("./controllers/postController");
 const router = express.Router();
@@ -8,9 +8,9 @@ const router = express.Router();
 router.post("/users/login", userController.login);
 router.post("/users", userController.createUser);
 router.get("/users", userController.indexAllUsers);
-router.get("/users/:id", userMiddleware.verifyTokens, userController.getUserById);
+router.get("/users", validationToken,userController.getUserById);
 router.post("/admin", userController.createAdmin);
-router.put("/users/username", userMiddleware.verifyTokens, userController.updateUsername);
+router.put("/users/username", validationToken, userController.updateUsername);
 router.put("/users/:id/email", userController.updateEmail);
 router.put("/users/:id/password", userController.updatePassword);
 router.delete("/users/:id/delete", userController.destroyUserById);
