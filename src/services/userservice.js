@@ -3,32 +3,40 @@ const sendCode = require("../utils/sendEmails");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
+const path = require("path");
 const { tryQuery, useTry, AppError } = require("../helper/error");
 const { User, RecoveryCode } = require("../resources/db");
 const { DateTime } = require("luxon");
 
-const PRIVATE_KEY = fs.readFileSync("./private.key");
+require("dotenv").config();
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const PUBLIC_KEY = fs.readFileSync("./public.key"); 
 
 const login = async (email, password) => {
 
-    const findUser = tryQuery("Erro ao buscar usuário no banco de dados!!!", () => User.findOne({
+    const findUser = await tryQuery("Erro ao buscar usuário no banco de dados!!!", () => User.findOne({
         where: { email: email }
     }));
 
+    console.log("Passou aqui");
 
-    if (!findUser || !bcrypt.compare(password, findUser.password)) {
+    if (!findUser || !bcrypt.compareSync(password, findUser.password)) {
         throw new AppError("Usuário não encontrado. Verifique o email ou se cadastre.", 401);
     }
 
-    const token = jwt.sign(
-        { id: findUser.id },
-        PRIVATE_KEY,
-        { 
-            expiresIn: "1h",
-            algorithm: "RS256"
-        }
-    );
+    console.log("Passou a comparação")
+
+    const token = {
+        token: jwt.sign(
+            { id: findUser.id },
+            PRIVATE_KEY,
+            { 
+                expiresIn: "1h",
+                algorithm: "RS256"
+            }
+        )
+    }
 
     return token;
 }
