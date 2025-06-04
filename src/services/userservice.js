@@ -11,7 +11,6 @@ const { DateTime } = require("luxon");
 require("dotenv").config();
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const PUBLIC_KEY = fs.readFileSync("./public.key"); 
 
 const login = async (email, password) => {
 
