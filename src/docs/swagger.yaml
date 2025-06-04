@@ -1,0 +1,5 @@
+openapi: 3.0.0
+info:
+  title: Sustentabilidade social
+  version: 1.0.6
+  description: Documentação da API do projeto integrador
