@@ -2,7 +2,12 @@ const userService = require("../services/userservice");
 
 const login = async (request, response) => {
     const token = await userService.login(request.body.email, request.body.password);
-    return response.status(200).json(token);
+    response.cookie("token", token.token, {
+        httpOnly: true,
+        sameSite: "Lax",
+        maxAge: 3600000
+    });
+    return response.status(200).json({ message: "Login efetuado com sucesso!!" });
 }
 
 const createUser = async (request, response) => {
@@ -31,17 +36,17 @@ const updateUsername = async (request, response) => {
 }
 
 const updateEmail = async (request, response) => {
-    const updatedEmail = await userService.updateEmail(request.params.id, request.body.email);
+    const updatedEmail = await userService.updateEmail(request.user.id, request.body.email);
     return response.status(201).json(updatedEmail);
 }
 
 const updatePassword = async (request, response) => {
-    const updatedPassword = await userService.updatePassword(request.params.id, request.body.password);
+    const updatedPassword = await userService.updatePassword(request.user.id, request.body.password);
     return response.status(201).json(updatedPassword);
 }
 
 const destroyUserById = async (request, response) => {
-    const deletedUser = await userService.destroyUserById(request.params.id);
+    const deletedUser = await userService.destroyUserById(request.user.id);
     return response.status(200).json(deletedUser);
 }
 
