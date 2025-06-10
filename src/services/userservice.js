@@ -18,13 +18,9 @@ const login = async (email, password) => {
         where: { email: email }
     }));
 
-    console.log("Passou aqui");
-
     if (!findUser || !bcrypt.compareSync(password, findUser.password)) {
         throw new AppError("Usuário não encontrado. Verifique o email ou se cadastre.", 401);
     }
-
-    console.log("Passou a comparação")
 
     const token = {
         token: jwt.sign(
