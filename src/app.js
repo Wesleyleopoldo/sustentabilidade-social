@@ -11,7 +11,11 @@ const swaggerDocument = YAML.parse(fs.readFileSync("./src/docs/swagger.yaml", "u
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors())
+
+app.use(cors({
+  origin: "http://127.0.0.1:5500", // ou "http://localhost:5500" dependendo de onde está seu frontend
+  credentials: true, // permite cookies
+}));
 
 app.use(router);
 app.use(errorHandler);
