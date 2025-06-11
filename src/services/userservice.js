@@ -14,9 +14,15 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 const login = async (email, password) => {
 
+    console.log("Entrou no metodo login" + password)
+
     const findUser = await tryQuery("Erro ao buscar usuário no banco de dados!!!", () => User.findOne({
         where: { email: email }
     }));
+
+    if(bcrypt.compareSync(password, findUser.password)) {
+        console.log("A senha é igual linha 22")
+    }
 
     if (!findUser || !bcrypt.compareSync(password, findUser.password)) {
         throw new AppError("Usuário não encontrado. Verifique o email ou se cadastre.", 401);
@@ -56,12 +62,12 @@ const createUser = async (body) => {
     }
 
     let nameFormatted = body.username.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/[^\w\-]+/g, "")
-        .replace(/\-\-+/g, "-")
-        .replace(/^-+|-+$/g, "");
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
     nameFormatted += hash
 
