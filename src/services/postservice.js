@@ -14,7 +14,7 @@ const createPost = async (title, content, userId, dateTime) => {
         throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
     }
 
-    if(permission.trust < 0.7) {
+    if(permission.trust < 0.5) {
         throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
     }
 
@@ -47,6 +47,7 @@ const createPost = async (title, content, userId, dateTime) => {
 
 const indexAllPosts = async () => {
     const posts = await tryQuery("Erro ao listar todos os posts", () => Post.findAll());
+    let isLiked = null;
     let postsDto = []
 
     if (!posts.length) {
@@ -55,14 +56,31 @@ const indexAllPosts = async () => {
 
     for(let index = 0; index < posts.length; index ++) {
         const post = posts[index];
-
-    
+        
+        // if (userId !== undefined) {
+        //     isLiked = await tryQuery("Erro ao buscar curtida", () => Likes.findOne({
+        //         where: { userId: userId }
+        //     }));
+        // }
 
         const user = await User.findOne({
             where: { id: post.userId }
         });
 
         if (!user) continue;
+
+        if (isLiked !== null) {
+            postsDto.push(createPostDTO({
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            slug: user.slug,
+            username: user.username,
+            dateTime: post.dateTime,
+            likes: post.likes,
+            liked: isLiked.action
+        }));
+        }
 
         postsDto.push(createPostDTO({
             id: post.id,
@@ -89,7 +107,7 @@ const indexAllPosts = async () => {
     return postsDto
 }
 
-const indexPost = async (postId) => {
+const indexPost = async (postId, userId) => {
     const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
 
     if(!post) {

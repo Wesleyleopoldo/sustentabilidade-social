@@ -13,7 +13,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use(cors({
-  origin: "http://127.0.0.1:5500", // ou "http://localhost:5500" dependendo de onde está seu frontend
+  origin: "http://localhost:5500", // ou "http://localhost:5500" dependendo de onde está seu frontend
   credentials: true, // permite cookies
 }));
 
