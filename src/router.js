@@ -9,6 +9,7 @@ const router = express.Router();
 
 // Rotas para os recursos de usuários...
 router.post("/users/login", userController.login);
+router.delete("/users/logout", validationToken, userController.logout);
 router.post("/users", userController.createUser);
 router.get("/users", userController.indexAllUsers);
 router.get("/users", validationToken,userController.getUserById);

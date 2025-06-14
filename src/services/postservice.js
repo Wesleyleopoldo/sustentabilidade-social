@@ -71,6 +71,8 @@ const indexAllPosts = async (userId) => {
             }));
         }
 
+        console.log(isLiked.action);
+
         object.id = post.id;
         object.title = post.title;
         object.content = post.content;
@@ -79,6 +81,7 @@ const indexAllPosts = async (userId) => {
         object.dateTime = post.dateTime;
         object.likes = post.likes
         if (!isLiked && isLiked !== null) {
+            console.log(isLiked.action);
             object.liked = isLiked.action;
         }
         postsDto.push(createPostDTO(object));
@@ -93,6 +96,8 @@ const indexAllPosts = async (userId) => {
     //     dateTime: post.dateTime,
     //     likes: post.likes
     // }));
+
+    console.log(postsDto.liked);
 
 
     return postsDto
@@ -146,7 +151,7 @@ const addLike = async (postId, userId) => {
         throw new AppError("Usuário já curtiu esse post!!!", 409);
     }
 
-    if(!isLiked) {
+    if (!isLiked) {
 
         const data = {
             postId: postId,
@@ -160,7 +165,6 @@ const addLike = async (postId, userId) => {
         isLiked.action = "like"
         await isLiked.save();
     }
-
 
     post.likes += 1;
 

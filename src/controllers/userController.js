@@ -10,6 +10,15 @@ const login = async (request, response) => {
     return response.status(200).json({ message: "Login efetuado com sucesso!!" });
 }
 
+const logout = async (request, response) => {
+    
+    response.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "Lax"
+    });
+    return response.status(200).json({ message: "Logout realizado!!!" });
+}
+
 const createUser = async (request, response) => {
     const newUser = await userService.createUser(request.body);
     return response.status(201).json(newUser);
@@ -52,6 +61,7 @@ const destroyUserById = async (request, response) => {
 
 module.exports = {
     login,
+    logout,
     createUser,
     indexAllUsers,
     getUserById,
