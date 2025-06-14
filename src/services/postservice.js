@@ -46,6 +46,8 @@ const createPost = async (title, content, userId, dateTime) => {
 }
 
 const indexAllPosts = async (userId) => {
+
+    console.log("Entrou na função")
     const posts = await tryQuery("Erro ao listar todos os posts", () => Post.findAll());
     let isLiked = null;
     const object = {}
@@ -56,6 +58,7 @@ const indexAllPosts = async (userId) => {
     }
 
     for(let index = 0; index < posts.length; index ++) {
+        console.log("Entrou no loop");
         const post = posts[index];
         
         const user = await User.findOne({
@@ -71,8 +74,6 @@ const indexAllPosts = async (userId) => {
             }));
         }
 
-        console.log(isLiked.action);
-
         object.id = post.id;
         object.title = post.title;
         object.content = post.content;
@@ -80,7 +81,7 @@ const indexAllPosts = async (userId) => {
         object.username = user.username || "Usuário não encontrado";
         object.dateTime = post.dateTime;
         object.likes = post.likes
-        if (!isLiked && isLiked !== null) {
+        if (isLiked && isLiked !== null) {
             console.log(isLiked.action);
             object.liked = isLiked.action;
         }
@@ -96,6 +97,8 @@ const indexAllPosts = async (userId) => {
     //     dateTime: post.dateTime,
     //     likes: post.likes
     // }));
+
+    console.log("Retornou algo")
 
     console.log(postsDto.liked);
 
