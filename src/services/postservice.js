@@ -45,9 +45,10 @@ const createPost = async (title, content, userId, dateTime) => {
     return newPostDto;
 }
 
-const indexAllPosts = async () => {
+const indexAllPosts = async (userId) => {
     const posts = await tryQuery("Erro ao listar todos os posts", () => Post.findAll());
     let isLiked = null;
+    const object = {}
     let postsDto = []
 
     if (!posts.length) {
@@ -57,40 +58,30 @@ const indexAllPosts = async () => {
     for(let index = 0; index < posts.length; index ++) {
         const post = posts[index];
         
-        // if (userId !== undefined) {
-        //     isLiked = await tryQuery("Erro ao buscar curtida", () => Likes.findOne({
-        //         where: { userId: userId }
-        //     }));
-        // }
-
         const user = await User.findOne({
             where: { id: post.userId }
         });
-
-        if (!user) continue;
-
-        if (isLiked !== null) {
-            postsDto.push(createPostDTO({
-            id: post.id,
-            title: post.title,
-            content: post.content,
-            slug: user.slug,
-            username: user.username,
-            dateTime: post.dateTime,
-            likes: post.likes,
-            liked: isLiked.action
-        }));
+        
+        if (userId !== null) {
+            isLiked = await tryQuery("Erro ao buscar curtida", () => Likes.findOne({
+                where: { 
+                    userId: userId, 
+                    postId: post.id 
+                }
+            }));
         }
 
-        postsDto.push(createPostDTO({
-            id: post.id,
-            title: post.title,
-            content: post.content,
-            slug: user.slug,
-            username: user.username,
-            dateTime: post.dateTime,
-            likes: post.likes
-        }));
+        object.id = post.id;
+        object.title = post.title;
+        object.content = post.content;
+        object.slug = user.slug || "Usuário não encontrado";
+        object.username = user.username || "Usuário não encontrado";
+        object.dateTime = post.dateTime;
+        object.likes = post.likes
+        if (!isLiked && isLiked !== null) {
+            object.liked = isLiked.action;
+        }
+        postsDto.push(createPostDTO(object));
     }
     
     // const postsDto = posts.map(post => createPostDTO({

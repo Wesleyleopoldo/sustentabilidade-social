@@ -11,8 +11,8 @@ const createPost = async (request, response) => {
     return response.status(201).json(newPost);
 }
 
-const indexAllPosts = async (_request, response) => {
-    const posts = await postService.indexAllPosts();
+const indexAllPosts = async (request, response) => {
+    const posts = await postService.indexAllPosts(request.user.id);
     return response.status(200).json(posts);
 }
 

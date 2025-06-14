@@ -3,6 +3,7 @@ const validationToken = require("./middlewares/validationToken");
 const userController = require("./controllers/userController");
 const postController = require("./controllers/postController");
 const multer = require("multer");
+const beLogged = require("./middlewares/beLogged");
 const upload = multer();
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.delete("/users/delete", validationToken,userController.destroyUserById);
 
 // Rotas para os recursos de posts...
 router.post("/posts", validationToken, upload.single("file"), postController.createPost);
-router.get("/posts", postController.indexAllPosts);
+router.get("/posts", beLogged,postController.indexAllPosts);
 router.get("/:id/posts", postController.indexPost);
 router.post("/:id/post/like", validationToken, postController.addLikes);
 router.put("/:id/post/removelike", validationToken, postController.removeLike);
