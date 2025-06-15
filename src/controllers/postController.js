@@ -12,7 +12,7 @@ const createPost = async (request, response) => {
 }
 
 const indexAllPosts = async (request, response) => {
-    const posts = await postService.indexAllPosts(request.user.id);
+    const posts = await postService.indexAllPosts(request.protocol, request.get("host"), request.user.id);
     return response.status(200).json(posts);
 }
 

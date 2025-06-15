@@ -3,6 +3,7 @@ const validationToken = require("./middlewares/validationToken");
 const userController = require("./controllers/userController");
 const postController = require("./controllers/postController");
 const multer = require("multer");
+const uploadMiddleware = require("./middlewares/uploadMiddleware");
 const beLogged = require("./middlewares/beLogged");
 const upload = multer();
 const router = express.Router();
@@ -10,7 +11,7 @@ const router = express.Router();
 // Rotas para os recursos de usuários...
 router.post("/users/login", userController.login);
 router.delete("/users/logout", validationToken, userController.logout);
-router.post("/users", userController.createUser);
+router.post("/users", uploadMiddleware.single("picture_profile_url"), userController.createUser);
 router.get("/users", userController.indexAllUsers);
 router.get("/users", validationToken,userController.getUserById);
 router.post("/admin", userController.createAdmin);

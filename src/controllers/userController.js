@@ -20,6 +20,9 @@ const logout = async (request, response) => {
 }
 
 const createUser = async (request, response) => {
+    const image = request.file;
+    request.body.picture_profile_url = image ? `/uploads/${image.filename}` : null;
+    console.log("Chegou ao controller");
     const newUser = await userService.createUser(request.body);
     return response.status(201).json(newUser);
 }

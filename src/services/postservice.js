@@ -8,15 +8,16 @@ const createPost = async (title, content, userId, dateTime) => {
 
     const permission = await tryQuery("Erro ao executar a função classifyTheme", () => classifyTheme(content));
 
-    console.log(permission);
-
-    if(permission.probalityToxic > 0.6 || permission.theme !== "sustentabilidade") {
-        throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
+    if (permission !== undefined) {
+        if(permission.probalityToxic > 0.6 || permission.theme !== "sustentabilidade") {
+            throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
+        }
+    
+        if(permission.trust < 0.5) {
+            throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
+        }
     }
 
-    if(permission.trust < 0.5) {
-        throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
-    }
 
     const data = {
         title: title,
@@ -45,7 +46,9 @@ const createPost = async (title, content, userId, dateTime) => {
     return newPostDto;
 }
 
-const indexAllPosts = async (userId) => {
+const indexAllPosts = async (protocol, host, userId) => {
+
+    console.log("Entrou na função")
     const posts = await tryQuery("Erro ao listar todos os posts", () => Post.findAll());
     let isLiked = null;
     const object = {}
@@ -56,6 +59,7 @@ const indexAllPosts = async (userId) => {
     }
 
     for(let index = 0; index < posts.length; index ++) {
+        console.log("Entrou no loop");
         const post = posts[index];
         
         const user = await User.findOne({
@@ -71,16 +75,17 @@ const indexAllPosts = async (userId) => {
             }));
         }
 
-        console.log(isLiked.action);
+        console.log(`${protocol}://${host}${user.picture_profile_url}`);
 
         object.id = post.id;
+        object.picture_profile_url = user.picture_profile_url ? `${protocol}://${host}${user.picture_profile_url}` : null;
         object.title = post.title;
         object.content = post.content;
         object.slug = user.slug || "Usuário não encontrado";
         object.username = user.username || "Usuário não encontrado";
         object.dateTime = post.dateTime;
         object.likes = post.likes
-        if (!isLiked && isLiked !== null) {
+        if (isLiked && isLiked !== null) {
             console.log(isLiked.action);
             object.liked = isLiked.action;
         }
@@ -96,6 +101,8 @@ const indexAllPosts = async (userId) => {
     //     dateTime: post.dateTime,
     //     likes: post.likes
     // }));
+
+    console.log("Retornou algo")
 
     console.log(postsDto.liked);
 

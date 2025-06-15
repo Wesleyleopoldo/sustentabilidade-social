@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yaml");
 const express = require("express");
@@ -16,6 +17,8 @@ app.use(cors({
   origin: "http://localhost:5500", // ou "http://localhost:5500" dependendo de onde está seu frontend
   credentials: true, // permite cookies
 }));
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(router);
 app.use(errorHandler);
