@@ -1,5 +1,5 @@
 const { sequelize } = require("./sequelize");
-
+const defineColor = require("../helper/colors");
 const User = require("../models/user");
 const Post = require("../models/post");
 const Likes = require("../models/likes");
@@ -9,7 +9,7 @@ const RecoveryCode = require("../models/recoverycode");
 
 async function initDb() {
     await sequelize.sync();
-    console.log("%cBanco de dados sicronizado!!!", "color: green");
+    console.log(defineColor("Banco de dados sicronizado!!!", "green"));
 }
 
 module.exports = { sequelize, User, Post, Likes, Comments, Images, RecoveryCode, initDb };
