@@ -1,45 +1,8 @@
 const createUserDTO = require("../dtos/userDto");
-const sendCode = require("../utils/sendEmails");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const fs = require("fs");
-const path = require("path");
 const { tryQuery, useTry, AppError } = require("../helper/error");
-const { User, RecoveryCode } = require("../resources/db");
+const { User } = require("../resources/db");
 const { DateTime } = require("luxon");
-
-require("dotenv").config();
-
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const PUBLIC_KEY = fs.readFileSync("./public.key"); 
-
-const login = async (email, password) => {
-
-    const findUser = await tryQuery("Erro ao buscar usuário no banco de dados!!!", () => User.findOne({
-        where: { email: email }
-    }));
-
-    console.log("Passou aqui");
-
-    if (!findUser || !bcrypt.compareSync(password, findUser.password)) {
-        throw new AppError("Usuário não encontrado. Verifique o email ou se cadastre.", 401);
-    }
-
-    console.log("Passou a comparação")
-
-    const token = {
-        token: jwt.sign(
-            { id: findUser.id },
-            PRIVATE_KEY,
-            { 
-                expiresIn: "1h",
-                algorithm: "RS256"
-            }
-        )
-    }
-
-    return token;
-}
 
 const createUser = async (body) => {
 
@@ -84,7 +47,7 @@ const createUser = async (body) => {
     });
 
     if (findUser) {
-        throw new Error("Email já cadastrado!");
+        throw new AppError("Email já cadastrado!");
     }
 
     const newUser = await tryQuery("Erro ao tentar criar novo usuário", () => User.create(datas));
@@ -101,7 +64,7 @@ const indexAllUsers = async () => {
     const allUsers = await tryQuery("Erro ao listar todos usuários", () => User.findAll());
 
     if (!allUsers.length) {
-        throw new Error("Nenhum usuário cadastrado");
+        throw new AppError("Nenhum usuário cadastrado");
     }
 
     const allUsersDto = allUsers.map(user => createUserDTO({
@@ -121,7 +84,7 @@ const getUserById = async (id) => {
     const user = await tryQuery("Erro ao buscar usuário", () => User.findByPk(id));
 
     if (!user) {
-        throw new Error("Nenhum usuário encontrado");
+        throw new AppError("Nenhum usuário encontrado");
     }
 
     const userDto = createUserDTO({
@@ -177,7 +140,7 @@ const createAdmin = async (body) => {
     });
 
     if (findUser) {
-        throw new Error("Email já cadastrado!");
+        throw new AppError("Email já cadastrado!");
     }
 
     const admin = await tryQuery("Erro ao tentar cadastrar administrador", () => User.create(datas));
@@ -195,7 +158,7 @@ const updateUsername = async (id, newUserName) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new Error("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!");
     }
 
     findUser.username = newUserName;
@@ -215,7 +178,7 @@ const destroyUserById = async (id) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new Error("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!");
     }
 
     const deletedUser = tryQuery("Erro ao deletar usuário", () => 
@@ -237,7 +200,7 @@ const updateEmail = async (id, newEmail) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new Error("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!");
     }
 
     findUser.email = newEmail;
@@ -254,7 +217,7 @@ const updatePassword = async (id, newPassword) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new Error("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!");
     }
 
     const beforePassword = findUser.password;
@@ -268,40 +231,7 @@ const updatePassword = async (id, newPassword) => {
     };
 }
 
-const generateRecoveryCode = async (email) => {
-
-    const user = await tryQuery("Erro ao buscar usuário", () => User.findOne({
-        where: { email: email }
-    }));
-
-    const code = Math.floor(100000 + Math.random() * 900000);
-    const createdAt = DateTime.now();
-    const expiresAt = createdAt.plus({ minutes: 1 });
-
-    const datas = {
-        userId: user.id,
-        code: code,
-        createdAt: createdAt,
-        expiresAt: expiresAt
-    }
-
-    if (!user) {
-        throw new Error("Usuário não existe na base!!");
-    }
-
-    const savedCode = await tryQuery("Erro ao salvar código de recuperação...", () => RecoveryCode.create(datas));
-
-    const sendedCode = await tryQuery("Erro ao enviar e-mail", () => sendCode(user.email, savedCode.code, "password"));
-
-    return { message: "Código de recuperação enviado para o e-mail fornecido." }
-}
-
-const validatyRecoveryCode = async (slug, code) => {
-
-}
-
 module.exports = {
-    login,
     createUser,
     indexAllUsers,
     getUserById,
@@ -310,5 +240,4 @@ module.exports = {
     destroyUserById,
     updateEmail,
     updatePassword,
-    generateRecoveryCode
 }

@@ -23,7 +23,9 @@
     "node-fetch": "^3.3.2",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7",
-    "sustentabilidade-social": "file:"
+    "sustentabilidade-social": "file:",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

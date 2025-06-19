@@ -1,30 +1,87 @@
 const express = require("express");
 const validationToken = require("./middlewares/validationToken");
 const userController = require("./controllers/userController");
-const postController = require("./controllers/postController");
 const router = express.Router();
 
-// Rotas para os recursos de usuários...
-router.post("/users/login", userController.login);
+/**
+ * @swagger
+ * /users:
+ *  post:
+ *      summary: Rota para criar usuário.
+ *      responses:
+ *          201:
+ *              description: Ela retorna foto e nome de usuário...
+ */
 router.post("/users", userController.createUser);
-router.get("/users", userController.indexAllUsers);
-router.get("/users", validationToken,userController.getUserById);
+/**
+ * @swagger
+ * /users/allusers:
+ *  get:
+ *      summary: Rota para obter todos usuários.
+ *      responses:
+ *          200:
+ *              description: Ela retorna id, slug, foto de usuário, nome de usuário email e privilégio...
+ */
+router.get("/users/allusers", userController.indexAllUsers);
+/**
+ * @swagger
+ * /:id/users:
+ *  get:
+ *      summary: Rota para obter um usuário pelo id.
+ *      responses:
+ *          200:
+ *              description: Ela retorna id, foto de usuário, nome de usuário e email...
+ */
+router.get("/:id/users", userController.getUserById);
+/**
+ * @swagger
+ * /admin:
+ *  post:
+ *      summary: Rota para criar um usuário administrador.
+ *      responses:
+ *          201:
+ *              description: Ela retorna id, foto de usuário e nome de usuário...
+ */
 router.post("/admin", userController.createAdmin);
-router.put("/users/username", validationToken, userController.updateUsername);
+/**
+ * @swagger
+ * /users/:id/username:
+ *  put:
+ *      summary: Rota para alterar nome de usuário pelo id.
+ *      responses:
+ *          200:
+ *              description: Ela retorna o novo nome de usuário...
+ */
+router.put("/users/:id/username", validationToken, userController.updateUsername);
+/**
+ * @swagger
+ * /users/:id/email:
+ *  put:
+ *      summary: Rota para alterar o email do usuário pelo id.
+ *      responses:
+ *          200:
+ *              description: Ela retorna o novo email do usuário...
+ */
 router.put("/users/:id/email", userController.updateEmail);
+/**
+ * @swagger
+ * /users/:id/password:
+ *  put:
+ *      summary: Rota para alterar o email do usuário pelo id.
+ *      responses:
+ *          200:
+ *              description: Ela retorna uma mensagem de sucesso para o usuário...
+ */
 router.put("/users/:id/password", userController.updatePassword);
+/**
+ * @swagger
+ * /users/:id/delete:
+ *  put:
+ *      summary: Rota para deletar usuário pelo id.
+ *      responses:
+ *          200:
+ *              description: Ela retorna uma mensagem de sucesso para o usuário...
+ */
 router.delete("/users/:id/delete", userController.destroyUserById);
-
-// Rotas para os recursos de posts...
-router.post("/:id/posts", postController.createPost);
-router.get("/posts", postController.indexAllPosts);
-router.get("/:id/posts", postController.indexPost);
-router.post("/:userId/:id/post/like", postController.addLikes);
-router.put("/:userId/:id/post/removelike", postController.removeLike);
-
-router.post("/:postId/:userId/comment", postController.createComment);
-router.put("/:userId/:commentId/comment", postController.updateComment);
-router.delete("/:userId/:commentId/removecomment", postController.destroyComment);
-router.get("/:postId/comments", postController.indexAllCommentsByPostId);
 
 module.exports = router;

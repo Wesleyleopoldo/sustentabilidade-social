@@ -1,10 +1,5 @@
 const userService = require("../services/userservice");
 
-const login = async (request, response) => {
-    const token = await userService.login(request.body.email, request.body.password);
-    return response.status(200).json(token);
-}
-
 const createUser = async (request, response) => {
     const newUser = await userService.createUser(request.body);
     return response.status(201).json(newUser);
@@ -16,7 +11,7 @@ const indexAllUsers = async (_request, response) => {
 }
 
 const getUserById = async (request, response) => {
-    const user = await userService.getUserById(request.user.id);
+    const user = await userService.getUserById(request.params.id);
     return response.status(200).json(user);
 }
 
@@ -26,7 +21,7 @@ const createAdmin = async (request, response) => {
 }
 
 const updateUsername = async (request, response) => {
-    const updatedUsername = await userService.updateUsername(request.user.id, request.body.username);
+    const updatedUsername = await userService.updateUsername(request.params.id, request.body.username);
     return response.status(200).json(updatedUsername);
 }
 
@@ -46,7 +41,6 @@ const destroyUserById = async (request, response) => {
 }
 
 module.exports = {
-    login,
     createUser,
     indexAllUsers,
     getUserById,
