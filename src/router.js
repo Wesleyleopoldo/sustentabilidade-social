@@ -1,0 +1,35 @@
+const express = require("express");
+const validationToken = require("./middlewares/validationToken");
+const userController = require("./controllers/userController");
+const postController = require("./controllers/postController");
+const multer = require("multer");
+const uploadMiddleware = require("./middlewares/uploadMiddleware");
+const beLogged = require("./middlewares/beLogged");
+const upload = multer();
+const router = express.Router();
+
+// Rotas para os recursos de usuários...
+router.post("/users/login", userController.login);
+router.delete("/users/logout", validationToken, userController.logout);
+router.post("/users", uploadMiddleware.single("picture_profile_url"), userController.createUser);
+router.get("/users", userController.indexAllUsers);
+router.get("/users", validationToken,userController.getUserById);
+router.post("/admin", userController.createAdmin);
+router.put("/users/username", validationToken, userController.updateUsername);
+router.put("/users/email", validationToken, userController.updateEmail);
+router.put("/users/password", validationToken,userController.updatePassword);
+router.delete("/users/delete", validationToken,userController.destroyUserById);
+
+// Rotas para os recursos de posts...
+router.post("/posts", validationToken, upload.single("file"), postController.createPost);
+router.get("/posts", beLogged,postController.indexAllPosts);
+router.get("/:id/posts", postController.indexPost);
+router.post("/:id/post/like", validationToken, postController.addLikes);
+router.put("/:id/post/removelike", validationToken, postController.removeLike);
+
+router.post("/:postId/comment", validationToken, postController.createComment);
+router.put("/:commentId/comment", validationToken, postController.updateComment);
+router.delete("/:commentId/removecomment", validationToken, postController.destroyComment);
+router.get("/:postId/comments", postController.indexAllCommentsByPostId);
+
+module.exports = router;
