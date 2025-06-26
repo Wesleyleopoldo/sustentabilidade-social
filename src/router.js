@@ -17,7 +17,7 @@ const router = express.Router();
  *                     type: object
  *                     properties:
  *                         picture_profile_url:
- *                             type: imagem-inserida
+ *                             type: string
  *                             format: binary
  *                         username:
  *                             type: string
@@ -31,7 +31,28 @@ const router = express.Router();
  * 
  *      responses:
  *          201:
- *              description: Ela retorna foto e nome de usuário...
+ *              description: Ela retorna id, foto e nome de usuário...
+ *              links:
+ *                  getUserById:
+ *                      operationId: getUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                  putUserNameById:
+ *                      operationId: putUsername
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                  putEmailById:
+ *                      operationId: putEmail
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                  putPasswordById:
+ *                      operationId: putPassword
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                  destroyUserById:
+ *                      operationId: destroyUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
  *          409:
  *              description: Retorna um erro se o email fornecido já tiver sido cadastrado...
  */
@@ -50,6 +71,27 @@ router.post("/users", userController.createUser);
  *                      operationId: getUser
  *                      parameters:
  *                          id: '$response.body#/id'
+ *                      description: Buscar um usuário pelo id na rota /{id}/users
+ *                  putUserNameById:
+ *                      operationId: putUsername
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar o nome do usuário pelo id na rota /users/{id}/username
+ *                  putEmailById:
+ *                      operationId: putEmail
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar o email do usuário pelo id na rota /users/{id}/email
+ *                  putPasswordById:
+ *                      operationId: putPassword
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar a senha do usuário pelo id na rota /users/{id}/password
+ *                  destroyUserById:
+ *                      operationId: destroyUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: deletar um usuário pelo id na rota /users/{id}/delete
  *          404:
  *              description: Retorna um erro se nenhum usuário for encontrado...
  */
@@ -72,6 +114,32 @@ router.get("/users/allusers", userController.indexAllUsers);
  *      responses:
  *          200:
  *              description: Ela retorna id, foto de usuário, nome de usuário e email...
+ *              links:
+ *                  getUserById:
+ *                      operationId: getUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Buscar um usuário pelo id na rota /{id}/users
+ *                  putUserNameById:
+ *                      operationId: putUsername
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar o nome do usuário pelo id na rota /users/{id}/username
+ *                  putEmailById:
+ *                      operationId: putEmail
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar o email do usuário pelo id na rota /users/{id}/email
+ *                  putPasswordById:
+ *                      operationId: putPassword
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar a senha do usuário pelo id na rota /users/{id}/password
+ *                  destroyUserById:
+ *                      operationId: destroyUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: deletar um usuário pelo id na rota /users/{id}/delete
  *          404:
  *              description: Retorna um erro se o usuário não for encontrado...
  */
@@ -104,6 +172,32 @@ router.get("/:id/users", userController.getUserById);
  *      responses:
  *          201:
  *              description: Ela retorna id, foto de usuário e nome de usuário...
+ *              links:
+ *                  getUserById:
+ *                      operationId: getUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Buscar um usuário pelo id na rota /{id}/users
+ *                  putUserNameById:
+ *                      operationId: putUsername
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar o nome do usuário pelo id na rota /users/{id}/username
+ *                  putEmailById:
+ *                      operationId: putEmail
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar o email do usuário pelo id na rota /users/{id}/email
+ *                  putPasswordById:
+ *                      operationId: putPassword
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: Atualizar a senha do usuário pelo id na rota /users/{id}/password
+ *                  destroyUserById:
+ *                      operationId: destroyUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *                      description: deletar um usuário pelo id na rota /users/{id}/delete
  *          409:
  *              description: Retorna um erro de conflito se o email já for cadastrado...
  */
@@ -136,6 +230,7 @@ router.post("/admin", userController.createAdmin);
  *      responses:
  *          200:
  *              description: Ela retorna o novo nome de usuário...
+ * 
  *          404:
  *              description: Retorna um erro se o usuário não for encontrado...
  */

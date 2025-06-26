@@ -52,6 +52,7 @@ const createUser = async (body) => {
 
     const newUser = await tryQuery("Erro ao tentar criar novo usuário", () => User.create(datas));
     const newUserDto = createUserDTO({
+        id: newUser.id,
         picture_profile_url: newUser.picture_profile_url,
         username: newUser.username,
     });
