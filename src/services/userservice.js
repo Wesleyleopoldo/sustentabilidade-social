@@ -47,7 +47,7 @@ const createUser = async (body) => {
     });
 
     if (findUser) {
-        throw new AppError("Email já cadastrado!");
+        throw new AppError("Email já cadastrado!", 409);
     }
 
     const newUser = await tryQuery("Erro ao tentar criar novo usuário", () => User.create(datas));
@@ -64,7 +64,7 @@ const indexAllUsers = async () => {
     const allUsers = await tryQuery("Erro ao listar todos usuários", () => User.findAll());
 
     if (!allUsers.length) {
-        throw new AppError("Nenhum usuário cadastrado");
+        throw new AppError("Nenhum usuário cadastrado", 404);
     }
 
     const allUsersDto = allUsers.map(user => createUserDTO({
@@ -84,7 +84,7 @@ const getUserById = async (id) => {
     const user = await tryQuery("Erro ao buscar usuário", () => User.findByPk(id));
 
     if (!user) {
-        throw new AppError("Nenhum usuário encontrado");
+        throw new AppError("Nenhum usuário encontrado", 404);
     }
 
     const userDto = createUserDTO({
@@ -140,7 +140,7 @@ const createAdmin = async (body) => {
     });
 
     if (findUser) {
-        throw new AppError("Email já cadastrado!");
+        throw new AppError("Email já cadastrado!", 409);
     }
 
     const admin = await tryQuery("Erro ao tentar cadastrar administrador", () => User.create(datas));
@@ -158,7 +158,7 @@ const updateUsername = async (id, newUserName) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new AppError("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!", 404);
     }
 
     findUser.username = newUserName;
@@ -178,7 +178,7 @@ const destroyUserById = async (id) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new AppError("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!", 404);
     }
 
     const deletedUser = tryQuery("Erro ao deletar usuário", () => 
@@ -200,7 +200,7 @@ const updateEmail = async (id, newEmail) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new AppError("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!", 404);
     }
 
     findUser.email = newEmail;
@@ -217,7 +217,7 @@ const updatePassword = async (id, newPassword) => {
     const findUser = await User.findByPk(id);
 
     if (!findUser) {
-        throw new AppError("Usuário não existe na base!!");
+        throw new AppError("Usuário não existe na base!!", 404);
     }
 
     const beforePassword = findUser.password;

@@ -17,7 +17,7 @@ const router = express.Router();
  *                     type: object
  *                     properties:
  *                         picture_profile_url:
- *                             type: string
+ *                             type: imagem-inserida
  *                             format: binary
  *                         username:
  *                             type: string
@@ -32,6 +32,8 @@ const router = express.Router();
  *      responses:
  *          201:
  *              description: Ela retorna foto e nome de usuário...
+ *          409:
+ *              description: Retorna um erro se o email fornecido já tiver sido cadastrado...
  */
 router.post("/users", userController.createUser);
 /**
@@ -39,16 +41,26 @@ router.post("/users", userController.createUser);
  * /users/allusers:
  *  get:
  *      summary: Rota para obter todos usuários.
+ *      tags: [Users]
  *      responses:
  *          200:
  *              description: Ela retorna id, slug, foto de usuário, nome de usuário email e privilégio...
+ *              links:
+ *                  getUserById:
+ *                      operationId: getUser
+ *                      parameters:
+ *                          id: '$response.body#/id'
+ *          404:
+ *              description: Retorna um erro se nenhum usuário for encontrado...
  */
 router.get("/users/allusers", userController.indexAllUsers);
 /**
  * @swagger
  * /{id}/users:
  *  get:
+ *      operationId: getUser
  *      summary: Rota para obter um usuário pelo id.
+ *      tags: [Users]
  *      parameters:
  *          - in: path
  *            name: uuid
@@ -60,6 +72,8 @@ router.get("/users/allusers", userController.indexAllUsers);
  *      responses:
  *          200:
  *              description: Ela retorna id, foto de usuário, nome de usuário e email...
+ *          404:
+ *              description: Retorna um erro se o usuário não for encontrado...
  */
 router.get("/:id/users", userController.getUserById);
 /**
@@ -90,12 +104,15 @@ router.get("/:id/users", userController.getUserById);
  *      responses:
  *          201:
  *              description: Ela retorna id, foto de usuário e nome de usuário...
+ *          409:
+ *              description: Retorna um erro de conflito se o email já for cadastrado...
  */
 router.post("/admin", userController.createAdmin);
 /**
  * @swagger
  * /users/{id}/username:
  *  put:
+ *      operationId: putUsername
  *      summary: Rota para alterar nome de usuário pelo id.
  *      tags: [Users]
  *      parameters:
@@ -119,12 +136,15 @@ router.post("/admin", userController.createAdmin);
  *      responses:
  *          200:
  *              description: Ela retorna o novo nome de usuário...
+ *          404:
+ *              description: Retorna um erro se o usuário não for encontrado...
  */
 router.put("/users/:id/username", validationToken, userController.updateUsername);
 /**
  * @swagger
  * /users/{id}/email:
  *  put:
+ *      operationId: putEmail
  *      summary: Rota para alterar o email do usuário pelo id.
  *      tags: [Users]
  *      parameters:
@@ -148,12 +168,15 @@ router.put("/users/:id/username", validationToken, userController.updateUsername
  *      responses:
  *          200:
  *              description: Ela retorna o novo email do usuário...
+ *          404:
+ *              description: Retorna um erro se o usuário não for encontrado...
  */
 router.put("/users/:id/email", userController.updateEmail);
 /**
  * @swagger
  * /users/{id}/password:
  *  put:
+ *      operationId: putPassword
  *      summary: Rota para alterar o email do usuário pelo id.
  *      tags: [Users]
  *      parameters:
@@ -177,12 +200,15 @@ router.put("/users/:id/email", userController.updateEmail);
  *      responses:
  *          200:
  *              description: Ela retorna uma mensagem de sucesso para o usuário...
+ *          404:
+ *              description: Retorna um erro se o usuário não for encontrado...
  */
 router.put("/users/:id/password", userController.updatePassword);
 /**
  * @swagger
  * /users/{id}/delete:
- *  put:
+ *  delete:
+ *      operationId: destroyUser
  *      summary: Rota para deletar usuário pelo id.
  *      tags: [Users]
  *      parameters:
@@ -196,6 +222,8 @@ router.put("/users/:id/password", userController.updatePassword);
  *      responses:
  *          200:
  *              description: Ela retorna uma mensagem de sucesso para o usuário...
+ *          404:
+ *              description: Retorna um erro se o usuário não for encontrado...
  */
 router.delete("/users/:id/delete", userController.destroyUserById);
 
