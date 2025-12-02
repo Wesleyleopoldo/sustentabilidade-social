@@ -8,4 +8,4 @@ require("dotenv").config();
 
 useTry(initDb, "Erro ao sicronizar com o banco de dados...");
 
-app.listen(process.env.PORT, () => console.log(defineColor("Servidor rodando...", "green")));
+app.listen(process.env.PORT || 3000, () => console.log(defineColor("Servidor rodando...", "green")));

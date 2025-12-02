@@ -1,20 +1,49 @@
 const { AppError, tryCatch } = require("../helper/error");
-const fs = require("fs");
 const jwt = require("jsonwebtoken");
+const jwksClient = require("jwks-rsa");
+require("dotenv").config();
 
-const PUBLIC_KEY = fs.readFileSync("./public.key");
+const client = jwksClient({
+    jwksUri: process.env.USERS_API_URL + "/service/jwks/.well-known/jwks.json",
+    cache: true,
+    cacheMaxEntries: 5,
+    cacheMaxAge: 600000
+});
+
+function getKey(header, callback) {
+    client.getSigningKey(header.kid, (err, key) => {
+        if (err) return callback(err);
+
+        const signingKey = key.getPublicKey();
+        callback(null, signingKey);
+    })
+}
 
 function verifyTokens(request, response, next) {
     const authHeader = request.headers["authorization"];
-    const token = authHeader && authHeader.split(" ");
-    
+
     if (!authHeader) throw new AppError("Token não fornecido", 401);
 
-    tryCatch("Erro ao executar o verify do jwt", () => jwt.verify(token, PUBLIC_KEY, { algorithms: ["RS256"]}));
+    const token = authHeader.replace("Bearer ", "");
 
-    request.user = payload;
+    tryCatch(
+        "Erro ao executar o verify do jwt", () => jwt.verify(
+            token, getKey, {
+            algorithms: ["RS256"],
+            issuer: "sustentabilidade-social"
+        },
+            (err, decoded) => {
+                if (err) {
+                    console.error("JWT ERROR:", err);
+                    throw new AppError("Token inválido", 401);
+                }
 
-    next();
+                request.user = decoded;
+                next();
+
+            }
+        )
+    );
 }
 
 module.exports = {

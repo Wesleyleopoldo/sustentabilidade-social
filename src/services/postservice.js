@@ -6,17 +6,17 @@ const classifyTheme = require("../utils/aiSentinel");
 
 const createPost = async (title, content, userId, dateTime) => {
 
-    const permission = await tryQuery("Erro ao executar a função classifyTheme", () => classifyTheme(content));
+    // const permission = await tryQuery("Erro ao executar a função classifyTheme", () => classifyTheme(content));
 
-    console.log(permission);
+    // console.log(permission);
 
-    if(permission.probalityToxic > 0.6 || permission.theme !== "sustentabilidade") {
-        throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
-    }
+    // if(permission.probalityToxic > 0.6 || permission.theme !== "sustentabilidade") {
+    //     throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
+    // }
 
-    if(permission.trust < 0.7) {
-        throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
-    }
+    // if(permission.trust < 0.7) {
+    //     throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
+    // }
 
     const data = {
         title: title,
