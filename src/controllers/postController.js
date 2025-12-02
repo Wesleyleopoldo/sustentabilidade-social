@@ -2,6 +2,9 @@ const postService = require("../services/postservice");
 const { tryRun } = require("../helper/error");
 
 const createPost = async (request, response) => {
+
+    console.log(request.params.id)
+
     const newPost = await postService.createPost(
         request.body.title,
         request.body.content,

@@ -3,37 +3,26 @@ const createPostDTO = require("../dtos/postDto");
 const { tryQuery, useTry, AppError } = require("../helper/error");
 const { Post, User, Likes, Comments } = require("../resources/db");
 const classifyTheme = require("../utils/aiSentinel");
+const { getUserById } = require("./userservice");
 
 const createPost = async (title, content, userId, dateTime) => {
 
-    // const permission = await tryQuery("Erro ao executar a função classifyTheme", () => classifyTheme(content));
 
-    // console.log(permission);
-
-    // if(permission.probalityToxic > 0.6 || permission.theme !== "sustentabilidade") {
-    //     throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
-    // }
-
-    // if(permission.trust < 0.7) {
-    //     throw new AppError("Oi! A Raiza, nossa assistente inteligente, analisou seu conteúdo e identificou que ele não pode ser publicado conforme nossas regras. Que tal revisar e tentar de novo?", 401);
-    // }
-
+    console.log(userId)
     const data = {
-        title: title,
-        content: content,
-        userId: userId,
-        dateTime: dateTime,
+        title,
+        content,
+        userId,
+        dateTime,
         likes: 0
-    }
+    };
 
-    const findUser = await tryQuery("Usuário pode não existir", () => User.findByPk(userId));
-    if (!findUser) {
-        throw new AppError("Usuário não foi encontrado na base de dados!!!", 404);
-    }
+    // consulta serviço de usuários
+    await getUserById(userId);
 
     const newPost = await tryQuery("Erro ao criar post", () => Post.create(data));
 
-    const newPostDto = createPostDTO({
+    return createPostDTO({
         id: newPost.id,
         title: newPost.title,
         content: newPost.content,
@@ -41,53 +30,40 @@ const createPost = async (title, content, userId, dateTime) => {
         dateTime: newPost.dateTime,
         likes: newPost.likes
     });
-
-    return newPostDto;
 }
+
 
 const indexAllPosts = async () => {
     const posts = await tryQuery("Erro ao listar todos os posts", () => Post.findAll());
-    let postsDto = []
+    let postsDto = [];
 
     if (!posts.length) {
         throw new AppError("Nenhum post encontrado!", 404);
     }
 
-    for(let index = 0; index < posts.length; index ++) {
-        const post = posts[index];
+    for (const post of posts) {
+        try {
+            const user = await getUserById(post.userId);
 
-    
+            postsDto.push(createPostDTO({
+                id: post.id,
+                title: post.title,
+                content: post.content,
+                slug: user.slug,
+                username: user.username,
+                dateTime: post.dateTime,
+                likes: post.likes
+            }));
 
-        const user = await User.findOne({
-            where: { id: post.userId }
-        });
-
-        if (!user) continue;
-
-        postsDto.push(createPostDTO({
-            id: post.id,
-            title: post.title,
-            content: post.content,
-            slug: user.slug,
-            username: user.username,
-            dateTime: post.dateTime,
-            likes: post.likes
-        }));
+        } catch (error) {
+            // se user 404 → só ignora esse post
+            continue;
+        }
     }
-    
-    // const postsDto = posts.map(post => createPostDTO({
-    //     id: post.id,
-    //     title: post.title,
-    //     content: post.content,
-    //     // TODO: Criar método para pegar o slug de cada usuário dono dos posts...
-    //     slug: 
-    //     dateTime: post.dateTime,
-    //     likes: post.likes
-    // }));
 
+    return postsDto;
+};
 
-    return postsDto
-}
 
 const indexPost = async (postId) => {
     const post = await tryQuery("Erro ao buscar post", () => Post.findByPk(postId));
@@ -96,7 +72,7 @@ const indexPost = async (postId) => {
         throw new AppError("Post não encontrado!!!", 404);
     }
 
-    const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(post.userId));
+    const findUser = await getUserById(post.userId);
 
     if(!findUser) {
         throw new AppError("Usuário não encontrado!!!", 404);
@@ -123,7 +99,7 @@ const addLike = async (postId, userId) => {
         throw new Error("Post não encontrado!!!");
     }
 
-    const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(userId));
+    const findUser = await getUserById(userId);
 
     if(!findUser) {
         throw new AppError("Usuário não encontrado!!!", 404);
@@ -173,7 +149,7 @@ const removeLike = async (postId, userId) => {
         throw new AppError("Post não encontrado", 404);
     }
 
-    const findUser = await tryQuery("Algo deu errado ao buscar usuário", () => User.findByPk(userId));
+    const findUser = await getUserById(userId);
 
     if(!findUser) {
         throw new AppError("Usuário não encontrado!!!", 404);
@@ -214,7 +190,7 @@ const createComment = async (userId, postId, comment, createdAt) => {
         throw new AppError("Post não encontrado!!!", 404);
     }
 
-    const findUser = await tryQuery("Erro ao tentar buscar usuário!!!", () => User.findByPk(userId));
+    const findUser = await getUserById(userId);
 
     if(!findUser) {
         throw new AppError("Usuário não encontrado", 404);
@@ -248,7 +224,7 @@ const updateComment = async (commentId, userId, content) => {
         throw new AppError("Comentário não encontrado!!!", 404);
     }
 
-    const findUser = await tryQuery("Erro ao buscar usuário!!!", () => User.findByPk(userId));
+    const findUser = await getUserById(userId);
 
     if(!findUser) {
         throw new AppError("Usuário não encontrado!!!", 404);
@@ -279,7 +255,7 @@ const destroyComment = async (commentId, userId) => {
         throw new AppError("Comentário não encontrado!!!", 404);
     }
 
-    const findUser = await tryQuery("Erro ao buscar usuário!!!", () => User.findByPk(userId));
+    const findUser = await getUserById(userId);
 
     if(!findUser) {
         throw new AppError("Usuário não encontrado!!!", 404);
@@ -314,9 +290,7 @@ const indexAllCommentsByPostId = async (postId) => {
 
     for(let index = 0; index < allComments.length; index ++) {
         const comment = allComments[index];
-        const user = await User.findOne({
-            where: { id: comment.userId }
-        });
+        const user = await getUserById(comment.userId);
 
         if(!user) continue;
 

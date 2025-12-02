@@ -21,12 +21,7 @@ const Post = sequelize.define("Post", {
 
     userId: {
         type: DataTypes.UUID,
-        references: {
-            model: User,
-            key: "id"
-        },
         allowNull: false,
-        onDelete: "CASCADE"
     },
 
     dateTime: {
@@ -38,11 +33,6 @@ const Post = sequelize.define("Post", {
         type: DataTypes.INTEGER,
         defaultValue: 0
     }
-});
-
-Post.belongsTo(User, {
-    foreignKey: "userId",
-    onDelete: "CASCADE"
 });
 
 module.exports = Post;

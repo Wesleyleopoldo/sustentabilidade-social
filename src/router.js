@@ -16,15 +16,15 @@ const router = express.Router();
 // router.delete("/users/:id/delete", userController.destroyUserById);
 
 // Rotas para os recursos de posts...
-router.post("/:id/posts", postController.createPost);
-router.get("/posts", userMiddleware.verifyTokens, postController.indexAllPosts);
+router.post("/:id/posts", userMiddleware.verifyTokens, postController.createPost);
+router.get("/posts", postController.indexAllPosts);
 router.get("/:id/posts", postController.indexPost);
-router.post("/:userId/:id/post/like", postController.addLikes);
-router.put("/:userId/:id/post/removelike", postController.removeLike);
+router.post("/:userId/:id/post/like", userMiddleware.verifyTokens, postController.addLikes);
+router.put("/:userId/:id/post/removelike", userMiddleware.verifyTokens, postController.removeLike);
 
-router.post("/:postId/:userId/comment", postController.createComment);
-router.put("/:userId/:commentId/comment", postController.updateComment);
-router.delete("/:userId/:commentId/removecomment", postController.destroyComment);
+router.post("/:postId/:userId/comment", userMiddleware.verifyTokens, postController.createComment);
+router.put("/:userId/:commentId/comment", userMiddleware.verifyTokens, postController.updateComment);
+router.delete("/:userId/:commentId/removecomment", userMiddleware.verifyTokens, postController.destroyComment);
 router.get("/:postId/comments", postController.indexAllCommentsByPostId);
 
 module.exports = router;

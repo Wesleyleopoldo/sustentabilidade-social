@@ -1,3 +1,34 @@
+const axios = require("axios");
+const { AppError } = require("../helper/error");
+
+require("dotenv").config();
+
+const USERS_BASE_URL = process.env.USERS_API_URL;
+
+async function getUserById(userId) {
+    try {
+        const response = await axios.get(`${USERS_BASE_URL}/internal/users/${userId}`, {
+            timeout: 2000,
+            headers: {
+                "X-Service-Key": process.env.POSTS_SERVICE_KEY
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            throw new AppError("Usuário não encontrado!", 404);
+        }
+
+        console.log(error, " ",process.env.POSTS_SERVICE_KEY);
+
+        throw new AppError("Erro ao consultar serviço de usuários.", 500);
+    }
+}
+
+module.exports = { getUserById };
+
+
 // const createUserDTO = require("../dtos/userDto");
 // const sendCode = require("../utils/sendEmails");
 // const jwt = require("jsonwebtoken");
@@ -8,7 +39,7 @@
 // const { DateTime } = require("luxon");
 
 // const PRIVATE_KEY = fs.readFileSync("./private.key");
-// const PUBLIC_KEY = fs.readFileSync("./public.key"); 
+// const PUBLIC_KEY = fs.readFileSync("./public.key");
 
 // const login = async (email, password) => {
 
@@ -24,7 +55,7 @@
 //     const token = jwt.sign(
 //         { id: findUser.id },
 //         PRIVATE_KEY,
-//         { 
+//         {
 //             expiresIn: "1h",
 //             algorithm: "RS256"
 //         }
@@ -210,7 +241,7 @@
 //         throw new Error("Usuário não existe na base!!");
 //     }
 
-//     const deletedUser = tryQuery("Erro ao deletar usuário", () => 
+//     const deletedUser = tryQuery("Erro ao deletar usuário", () =>
 //         User.destroy({
 //             where: { id: findUser.id }
 //         })
